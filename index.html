@@ -4,12 +4,23 @@
 <script type="text/javascript" src="js/knot.js"></script>
 
 <script type="text/javascript" src="js/MochiKit.js"></script>
-<script type="text/javascript" src="js/my_knots.js"></script>
+<script type="text/javascript" src="js/knot_ui.js"></script>
+<style>
+.hc {
+}
+
+div.hc:hover {
+    background-color: #ccc;
+}
+</style>
 </head>
 <body>
 
 <div>
-Parts <input type="text" id="parts" size=2/> x Bights <input type="text" id="bights" size=2/>
+Parts x Bights: <input type="text" id="parts" size=2/> x <input type="text" id="bights" size=2/>
+</div>
+
+<div id="half_cycles">
 </div>
 
 </body>

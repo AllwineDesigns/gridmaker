@@ -10,15 +10,47 @@ function gcd(x,y) {
     return gcd(y, x%y);
 }
 
-function HalfCycle() {
-    this.init();
+function HalfCycle(d) {
+    this.init(d);
 }
 
 HalfCycle.prototype = {
+    dir: 'L',
     from_pin: 0,
     to_pin: 0,
-    init: function() {
+    init: function(d) {
+        this.dir = d;
         this.run_list = [];
+    },
+    toString: function() {
+        var from_side = (this.dir == 'L') ? 'R' : 'L';
+        var to_side = (this.dir == 'L') ? 'L' : 'R';
+
+        var str = "from " + from_side + " pin " + this.from_pin + " " + (this.run_list.length == 0 ? '' : (this.run_list_str() + " ")) +
+                  "to " + to_side + " pin " + this.to_pin;
+
+        return str;
+    },
+    run_list_str: function() {
+        var run_list = [];
+
+        for(var i = 0; i < this.run_list.length; i++) {
+            if(run_list.length == 0 || run_list[run_list.length-1].uo != this.run_list[i]) {
+                run_list.push({
+                    uo: this.run_list[i],
+                    count: 1
+                });
+            } else {
+                run_list[run_list.length-1].count++;
+            }
+        }
+
+        var run_list_strs = [];
+        for(var i = 0; i < run_list.length; i++) {
+            run_list_strs.push("" + run_list[i].uo + run_list[i].count);
+        }
+
+        return run_list_strs.join(" ");
     }
 };
 
@@ -125,7 +157,7 @@ Knot.prototype = {
             for(var i = 1; i < m; i++) {
                 var r = (i*this.parts) % m;
                 if(r == 0) {
-                    r = (i*parts+1) %m;
+                    r = (i*this.parts+1) %m;
                     this.pins.push(Math.floor(r/2)+1);
                 } else if(i % 2) {
                     this.pins.push(Math.floor(r/2)+1);
@@ -138,14 +170,16 @@ Knot.prototype = {
         this.pins.push(1);
     },
     fill_half_cycles: function() {
-        var hc = new HalfCycle();
+        var going_right = true;
+        var hc = new HalfCycle('R');
         hc.from_pin = this.pins[0];
         hc.to_pin = this.pins[1];
 
         this.half_cycles.push(hc);
 
         for(var hc_num = 2; hc_num <= 2*this.bights; hc_num++) {
-            hc = new HalfCycle();
+            going_right = !going_right;
+            hc = new HalfCycle(going_right ? 'R' : 'L');
             hc.from_pin = this.pins[hc_num-1];
             hc.to_pin = this.pins[hc_num];
 
