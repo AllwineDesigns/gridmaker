@@ -61,20 +61,19 @@ function Knot(p, b, sobre, coding) {
 Knot.prototype = {
     parts: 5,
     bights: 4,
-    coding: "\\/", 
+    coding_part: "\\/", 
     init: function(p, b, sobre, coding_part) {
         if(p) this.parts = p;
         if(b) this.bights = b;
-        if(coding_part) this.coding = coding_part;
+        if(coding_part) this.coding_part = coding_part;
         this.sobre = sobre;
         this.solve();
     },
     fill_coding: function() {
-        coding = "";
+        this.coding = "";
         for(var i = 0; i < this.parts-1; i++) {
-            coding += this.coding[i%this.coding.length];
+            this.coding += this.coding_part[i%this.coding_part.length];
         }
-        this.coding = coding;
     },
 
     check_conditions: function() {

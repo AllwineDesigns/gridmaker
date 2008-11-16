@@ -2,34 +2,67 @@ function KnotUI() {
     this.init();
 }
 
-KnotUI.prototype = {             
-    knot: new Knot(11, 7, false),
+KnotUI.prototype = {
+    knot: new Knot(11, 7, false, "\\/"),
+    animation_time: 0,
+    animation_dt: .01,
+    paused: true,
     elements: {},
     init: function() {
         this.diagram = new KnotDiagram({
             knot: this.knot,
-            part_dist: 20,
-            bight_dist: 30,
+            width: 300,
+            height: 200,
+//            part_dist: 20,
+//            bight_dist: 30,
             strand_width: 10
         });
-        this.initElements();
-        this.connectSignals();
-        this.updateHalfCycles();
-        this.elements.canvas.width = this.diagram.width;
-        this.elements.canvas.height = this.diagram.height+60;
-        this.drawKnot();
+        this.init_elements();
+        this.connect_signals();
+        this.update_half_cycles();
+        this.draw_knot();
     },
 
-    initElements: function() {
+    init_elements: function() {
         this.elements.parts = $("parts");
         this.elements.bights = $("bights");
+
+        this.elements.parts.value = this.knot.parts;
+        this.elements.bights.value = this.knot.bights;
+
         this.elements.half_cycles = $("half_cycles");
         this.elements.canvas = $("canvas");
+        this.elements.animate_button = $("animate_button");
+        this.elements.width = $("width");
+        this.elements.height = $("height");
+
+        this.elements.width.value = this.diagram.width;
+        this.elements.height.value = this.diagram.height;
     },
 
-    connectSignals: function() {
+    connect_signals: function() {
         connect(this.elements.parts, "onchange", bind(this.updateKnot, this));
         connect(this.elements.bights, "onchange", bind(this.updateKnot, this));
+
+        connect(this.elements.width, "onchange", bind(this.updateDiagram, this));
+        connect(this.elements.height, "onchange", bind(this.updateDiagram, this));
+
+        connect(this.elements.animate_button, "onclick", bind(function() {
+            this.paused = !this.paused
+            if(!this.paused) {
+                this.animate();
+            }
+        }, this));
+    },
+
+    updateDiagram: function() {
+        try {
+            var width = parseInt(this.elements.width.value);
+            var height = parseInt(this.elements.height.value);
+            this.diagram.update_opts({ width: width, height: height });
+            this.draw_knot();
+        } catch(err) {
+        }
     },
 
     updateKnot: function() {
@@ -42,16 +75,14 @@ KnotUI.prototype = {
             this.knot.bights = bights;
             this.knot.solve();
 
-            this.updateHalfCycles();
+            this.update_half_cycles();
             this.diagram.calc_knot();
-            this.elements.canvas.width = this.diagram.width;
-            this.elements.canvas.height = this.diagram.height+60;
-            this.drawKnot();
+            this.draw_knot();
         } catch(err) { 
         }
     },
 
-    updateHalfCycles: function() {
+    update_half_cycles: function() {
         this.elements.half_cycles.innerHTML = "";
         forEach(this.knot.half_cycles, bind(function(hc) {
             this.elements.half_cycles.appendChild(
@@ -60,18 +91,30 @@ KnotUI.prototype = {
         }, this));
     },
 
-    drawKnot: function() {
+    draw_knot: function() {
+        this.elements.canvas.width = this.diagram.width;
+        this.elements.canvas.height = this.diagram.height+60;
         var ctx = this.elements.canvas.getContext("2d");
-
         this.diagram.draw(ctx, 1);
+    },
+    animate: function() {
+        var ctx = this.elements.canvas.getContext("2d");
+        this.diagram.draw(ctx, this.animation_time);
+        this.animation_time += this.animation_dt;
+        if(this.animation_time > 1) {
+            this.animation_time -= 1;
+        }
+        if(!this.paused) {
+            callLater(.2, bind(this.animate, this));
+        }
     }
 };
 
 function KnotDiagram(opts) {
     this.init({
         knot: opts.knot,
-        part_dist: opts.part_dist,
-        bight_dist: opts.bight_dist,
+        width: opts.width,
+        height: opts.height,
         strand_width: opts.strand_width
     });
 }
@@ -85,11 +128,13 @@ KnotDiagram.prototype = {
         this.calc_knot();
     },
     calc_knot: function() {
-        var hyp = this.knot.parts*this.part_dist;
-        var x = (this.knot.half_cycles[0].to_pin-1+.5*((this.knot.bights+1)%2))*this.bight_dist;
+        this.bight_dist = this.width/this.knot.bights;
 
-        this.height = Math.sqrt(hyp*hyp-x*x);
-        this.width = this.knot.bights*this.bight_dist;
+        var to_pin = this.knot.half_cycles[0].to_pin;
+        var x = (to_pin-1+.5*(this.knot.parts%2))*this.bight_dist;
+        var hyp = Math.sqrt(x*x+this.height*this.height);
+
+        this.part_dist = hyp/this.knot.parts;
 
         this.angle = Math.acos(x/hyp);
         this.dx = this.part_dist*Math.cos(this.angle)
@@ -104,9 +149,6 @@ KnotDiagram.prototype = {
             for(var j = 0; j < this.knot.parts-1; j++) {
                 var over = (this.knot.sobre && this.knot.coding[j] == "/") ||
                            (!this.knot.sobre && this.knot.coding[j] == "\\");
-                if(i%2 && (this.knot.bights%2)) {
-                    over = !over;
-                }
 
                 this.half_cycles[i].push(new KnotPiece({
                     diagram: this,
@@ -123,7 +165,7 @@ KnotDiagram.prototype = {
                 x: startx,
                 y: starty,
                 type: (i%2) ? 'bottom_miter' : 'top_miter',
-                uo: 'O'
+                uo: 'U'
             }));
         }
     },
@@ -138,7 +180,7 @@ KnotDiagram.prototype = {
         ctx.save();
         this.set_origin(ctx);
         var end_i = this.half_cycles.length*t;
-        for(var i = 0; i < end_i; i++) {
+        for(var i = 0; i < Math.floor(end_i); i++) {
             for(var j = 0; j < this.half_cycles[i].length; j++) {
                 this.half_cycles[i][j].draw(ctx, 1);
             }
@@ -209,9 +251,20 @@ KnotPiece.prototype = {
             if(x1 < 0) {
                 x1 += this.diagram.width;
                 x2 += this.diagram.width;
+                x3 += this.diagram.width;
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
+                ctx.lineTo(x3, y3);
+                ctx.stroke();
+            } else if(x3 > this.diagram.width) {
+                x1 -= this.diagram.width;
+                x2 -= this.diagram.width;
+                x3 -= this.diagram.width;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineTo(x3, y3);
                 ctx.stroke();
             }
             ctx.restore();
@@ -289,6 +342,22 @@ KnotPiece.prototype = {
                 ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
                 ctx.stroke();
                 ctx.restore();
+            } else if(this.x+this.diagram.part_dist*.5 > this.diagram.width) {
+                ctx.save();
+                ctx.translate(this.x-this.diagram.width, this.y);
+                ctx.rotate(this.diagram.angle);
+                ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
+
+                ctx.beginPath();
+                ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+                ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+                ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+                ctx.stroke();
+                ctx.restore();
             }
 
             ctx.restore();
@@ -325,6 +394,22 @@ KnotPiece.prototype = {
             if(this.x-this.diagram.part_dist*.5 < 0) {
                 ctx.save();
                 ctx.translate(this.x+this.diagram.width, this.y);
+                ctx.rotate(-this.diagram.angle);
+                ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
+
+                ctx.beginPath();
+                ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+                ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+                ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+                ctx.stroke();
+                ctx.restore();
+            } else if(this.x+this.diagram.part_dist*.5 > this.diagram.width) {
+                ctx.save();
+                ctx.translate(this.x-this.diagram.width, this.y);
                 ctx.rotate(-this.diagram.angle);
                 ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
 
