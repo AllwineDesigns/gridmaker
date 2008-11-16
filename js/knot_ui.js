@@ -482,7 +482,7 @@ KnotPiece.prototype = {
         top_miter: function(ctx, t) {
             this.draw_top_miter(ctx, this.x, this.y, t);
             if(this.x-1 < 0) {
-                this.top_bottom_miter(ctx, this.x+this.diagram.width, this.y, t);
+                this.draw_top_miter(ctx, this.x+this.diagram.width, this.y, t);
             } else if(this.x+1 > this.diagram.width) {
                 this.draw_top_miter(ctx, this.x-this.diagram.width, this.y, t);
             }
