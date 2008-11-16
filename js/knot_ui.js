@@ -3,8 +3,7 @@ function KnotUI() {
 }
 
 KnotUI.prototype = {
-//    knot: new Knot(11, 7, false, "\\/"),
-    knot: new Knot(21, 19, false, "/\\\\\\\\////\\"),
+    knot: new Knot(11, 7, false, "\\/"),
     animation_time: 0,
     animation_dt: .01,
     paused: true,
@@ -14,6 +13,9 @@ KnotUI.prototype = {
             knot: this.knot,
             width: 300,
             height: 200,
+            under_color: 'white',
+            over_color: 'white',
+            miter_color: 'white',
 //            part_dist: 20,
 //            bight_dist: 30,
             strand_width: 10
@@ -21,7 +23,7 @@ KnotUI.prototype = {
         this.init_elements();
         this.connect_signals();
         this.update_half_cycles();
-        this.draw_knot();
+        this.update_diagram();
     },
 
     init_elements: function() {
@@ -33,7 +35,7 @@ KnotUI.prototype = {
 
         this.elements.half_cycles = $("half_cycles");
 //        this.elements.animate_button = $("animate_button");
-        this.elements.canvas = $("canvas");
+        this.elements.canvas = $("knot_diagram");
 
         this.elements.width = $("width");
         this.elements.height = $("height");
@@ -45,22 +47,34 @@ KnotUI.prototype = {
         this.elements.coding = $("coding");
         this.elements.coding.value = this.knot.coding_part;
 
+        this.elements.strand_width = $("strand_width");
+        this.elements.strand_width.value = this.diagram.strand_width;
+
+        this.elements.over_color = $("over_color");
+        this.elements.over_color.value = this.diagram.over_color;
+
+        this.elements.under_color = $("under_color");
+        this.elements.under_color.value = this.diagram.under_color;
+
+        this.elements.miter_color = $("miter_color");
+        this.elements.miter_color.value = this.diagram.miter_color;
+
         this.elements.generate = $("generate");
     },
 
     connect_signals: function() {
         /*
-        connect(this.elements.parts, "onchange", bind(this.updateKnot, this));
-        connect(this.elements.bights, "onchange", bind(this.updateKnot, this));
-        connect(this.elements.sobre, "onchange", bind(this.updateKnot, this));
-        connect(this.elements.coding, "onchange", bind(this.updateKnot, this));
+        connect(this.elements.parts, "onchange", bind(this.update_knot, this));
+        connect(this.elements.bights, "onchange", bind(this.update_knot, this));
+        connect(this.elements.sobre, "onchange", bind(this.update_knot, this));
+        connect(this.elements.coding, "onchange", bind(this.update_knot, this));
 
-        connect(this.elements.width, "onchange", bind(this.updateDiagram, this));
-        connect(this.elements.height, "onchange", bind(this.updateDiagram, this));
+        connect(this.elements.width, "onchange", bind(this.update_diagram, this));
+        connect(this.elements.height, "onchange", bind(this.update_diagram, this));
         */
         connect(this.elements.generate, "onclick", bind(function() {
-            this.updateKnot();
-            this.updateDiagram();
+            this.update_knot();
+            this.update_diagram();
         }, this));
 
 /*
@@ -83,17 +97,25 @@ KnotUI.prototype = {
         */
     },
 
-    updateDiagram: function() {
+    update_diagram: function() {
         try {
             var width = parseInt(this.elements.width.value);
             var height = parseInt(this.elements.height.value);
-            this.diagram.update_opts({ width: width, height: height });
+            var strand_width = parseInt(this.elements.strand_width.value);
+            this.diagram.update_opts({ width: width, 
+                                       height: height, 
+                                       strand_width: strand_width,
+                                       over_color: this.elements.over_color.value,
+                                       under_color: this.elements.under_color.value,
+                                       miter_color: this.elements.miter_color.value});
+            this.elements.canvas.width = this.diagram.width;
+            this.elements.canvas.height = this.diagram.absolute_height;
             this.draw_knot();
         } catch(err) {
         }
     },
 
-    updateKnot: function() {
+    update_knot: function() {
         try {
             var parts = parseInt(this.elements.parts.value);
             var bights = parseInt(this.elements.bights.value);
@@ -124,8 +146,6 @@ KnotUI.prototype = {
     },
 
     draw_knot: function() {
-        this.elements.canvas.width = this.diagram.width;
-        this.elements.canvas.height = this.diagram.height+60;
         var ctx = this.elements.canvas.getContext("2d");
         ctx.save();
         this.diagram.clear(ctx);
@@ -152,7 +172,10 @@ function KnotDiagram(opts) {
         knot: opts.knot,
         width: opts.width,
         height: opts.height,
-        strand_width: opts.strand_width
+        strand_width: opts.strand_width,
+        over_color: opts.over_color,
+        under_color: opts.under_color,
+        miter_color: opts.miter_color
     });
 }
 
@@ -176,6 +199,8 @@ KnotDiagram.prototype = {
         this.angle = Math.acos(x/hyp);
         this.dx = this.part_dist*Math.cos(this.angle)
         this.dy = this.part_dist*Math.sin(this.angle)
+
+        this.absolute_height = this.height + this.strand_width/Math.cos(Math.PI*.5-this.angle)+4;
 
         this.half_cycles = [];
 
@@ -247,7 +272,7 @@ KnotDiagram.prototype = {
     },
     set_origin: function(ctx) {
         ctx.scale(1, -1);
-        ctx.translate(0, -this.height-10);
+        ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+2));
     },
 
     clear: function(ctx) {
@@ -269,96 +294,132 @@ KnotPiece.prototype = {
     init: function(opts) {
         update(this, opts);
     },
+    draw_top_miter: function(ctx, x, y, t) {
+        var l = this.diagram.part_dist*.5;
+        var w = this.diagram.strand_width*.5;
+        var costheta = Math.cos(this.diagram.angle);
+        var sintheta = Math.sin(this.diagram.angle);
+        var cosphi = Math.cos(Math.PI*.5-this.diagram.angle);
+        var x1 = x+l*costheta-w*sintheta;
+        var y1 = y-l*sintheta-w*costheta;
+
+        var x2 = x+l*costheta+w*sintheta;
+        var y2 = y-l*sintheta+w*costheta;
+
+        var x3 = x;
+        var y3 = y+w/cosphi;
+
+        var x4 = x-l*costheta-w*sintheta;
+        var y4 = y-l*sintheta+w*costheta;
+
+        var x5 = x-l*costheta+w*sintheta;
+        var y5 = y-l*sintheta-w*costheta;
+
+        var x6 = x;
+        var y6 = y-w/cosphi;
+
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.fillStyle = this.diagram.miter_color;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.lineTo(x5, y5);
+        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.closePath()
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x5, y5);
+        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.stroke();
+
+
+        ctx.restore();
+    },
+    draw_bottom_miter: function(ctx, x, y, t) {
+        var l = this.diagram.part_dist*.5;
+        var w = this.diagram.strand_width*.5;
+        var costheta = Math.cos(this.diagram.angle);
+        var sintheta = Math.sin(this.diagram.angle);
+        var cosphi = Math.cos(Math.PI*.5-this.diagram.angle);
+        var x1 = x+l*costheta-w*sintheta;
+        var y1 = y+l*sintheta+w*costheta;
+
+        var x2 = x+l*costheta+w*sintheta;
+        var y2 = y+l*sintheta-w*costheta;
+
+        var x3 = x;
+        var y3 = y-w/cosphi;
+
+        var x4 = x-l*costheta-w*sintheta;
+        var y4 = y+l*sintheta-w*costheta;
+
+        var x5 = x-l*costheta+w*sintheta;
+        var y5 = y+l*sintheta+w*costheta;
+
+        var x6 = x;
+        var y6 = y+w/cosphi;
+
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.fillStyle = this.diagram.miter_color;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.lineTo(x5, y5);
+        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.closePath()
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x5, y5);
+        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.stroke();
+
+        ctx.restore();
+    },
     draw_type: {
         bottom_miter: function(ctx, t) {
-            ctx.save();
-            ctx.lineWidth = this.diagram.strand_width;
-            var x1 = this.x-this.diagram.dx*.5;
-            var y1 = this.y+this.diagram.dy*.5
-
-            var x2 = this.x;
-            var y2 = this.y;
-
-            var x3 = this.x+this.diagram.dx*.5;
-            var y3 = this.y+this.diagram.dy*.5
-
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.lineTo(x3, y3);
-            ctx.stroke();
-
-            if(x1 < 0) {
-                x1 += this.diagram.width;
-                x2 += this.diagram.width;
-                x3 += this.diagram.width;
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.lineTo(x3, y3);
-                ctx.stroke();
-            } else if(x3 > this.diagram.width) {
-                x1 -= this.diagram.width;
-                x2 -= this.diagram.width;
-                x3 -= this.diagram.width;
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.lineTo(x3, y3);
-                ctx.stroke();
+            this.draw_bottom_miter(ctx, this.x, this.y, t);
+            if(this.x-1 < 0) {
+                this.draw_bottom_miter(ctx, this.x+this.diagram.width, this.y, t);
+            } else if(this.x+1 > this.diagram.width) {
+                this.draw_bottom_miter(ctx, this.x-this.diagram.width, this.y, t);
             }
-            ctx.restore();
         },
         top_miter: function(ctx, t) {
-            ctx.save();
-            ctx.lineWidth = this.diagram.strand_width;
-            var x1 = this.x-this.diagram.dx*.5;
-            var y1 = this.y-this.diagram.dy*.5
-
-            var x2 = this.x;
-            var y2 = this.y;
-
-            var x3 = this.x+this.diagram.dx*.5;
-            var y3 = this.y-this.diagram.dy*.5
-
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.lineTo(x3, y3);
-            ctx.stroke();
-
-            if(x1 < 0) {
-                x1 += this.diagram.width;
-                x2 += this.diagram.width;
-                x3 += this.diagram.width;
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.lineTo(x3, y3);
-                ctx.stroke();
-            } else if(x3 > this.diagram.width) {
-                x1 -= this.diagram.width;
-                x2 -= this.diagram.width;
-                x3 -= this.diagram.width;
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.lineTo(x3, y3);
-                ctx.stroke();
+            this.draw_top_miter(ctx, this.x, this.y, t);
+            if(this.x-1 < 0) {
+                this.top_bottom_miter(ctx, this.x+this.diagram.width, this.y, t);
+            } else if(this.x+1 > this.diagram.width) {
+                this.draw_top_miter(ctx, this.x-this.diagram.width, this.y, t);
             }
-            ctx.restore();
         },
         up: function(ctx, t) {
             ctx.save();
             if(this.uo == 'O') {
-                ctx.fillStyle = "rgba(255,0,0,1)";
+                ctx.fillStyle = this.diagram.over_color;
                 ctx.globalCompositeOperation = 'source-over';
             } else {
-                ctx.fillStyle = "rgba(0,255,0,1)";
+                ctx.fillStyle = this.diagram.under_color;
                 ctx.globalCompositeOperation = 'destination-over';
             }
             ctx.lineWidth = 1;
-//            ctx.fillStyle = "rgba(255,255,255,1)";
             ctx.strokeStle = "rgba(0,0,0,1)";
             
             ctx.save();
@@ -416,14 +477,13 @@ KnotPiece.prototype = {
         down: function(ctx, t) {
             ctx.save();
             if(this.uo == 'O') {
-                ctx.fillStyle = "rgba(255,0,0,1)";
+                ctx.fillStyle = this.diagram.over_color;
                 ctx.globalCompositeOperation = 'source-over';
             } else {
-                ctx.fillStyle = "rgba(0,255,0,1)";
+                ctx.fillStyle = this.diagram.under_color;
                 ctx.globalCompositeOperation = 'destination-over';
             }
             ctx.lineWidth = 1;
-//            ctx.fillStyle = "rgba(255,255,255,1)";
             ctx.strokeStle = "rgba(0,0,0,1)";
             
             ctx.save();
