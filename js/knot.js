@@ -89,7 +89,7 @@ Knot.prototype = {
     },
 
     init_vars: function() {
-        this.n = this.parts/this.bights;
+        this.n = Math.floor(this.parts/this.bights);
         this.r = this.parts%this.bights;
         this.v = this.bights - this.r;
         this.cbn = [];

@@ -190,7 +190,7 @@ KnotDiagram.prototype = {
     calc_knot: function() {
         this.bight_dist = this.width/this.knot.bights;
 
-        var to_pin = this.knot.half_cycles[0].to_pin;
+        var to_pin = this.knot.half_cycles[0].to_pin + (Math.floor(this.knot.n/2))*this.knot.bights;
         var x = (to_pin-1+.5*(this.knot.parts%2))*this.bight_dist;
         var hyp = Math.sqrt(x*x+this.height*this.height);
 
