@@ -3,7 +3,8 @@ function KnotUI() {
 }
 
 KnotUI.prototype = {
-    knot: new Knot(11, 7, false, "\\/"),
+//    knot: new Knot(11, 7, false, "\\/"),
+    knot: new Knot(21, 19, false, "/\\\\\\\\////\\"),
     animation_time: 0,
     animation_dt: .01,
     paused: true,
@@ -31,28 +32,55 @@ KnotUI.prototype = {
         this.elements.bights.value = this.knot.bights;
 
         this.elements.half_cycles = $("half_cycles");
+//        this.elements.animate_button = $("animate_button");
         this.elements.canvas = $("canvas");
-        this.elements.animate_button = $("animate_button");
+
         this.elements.width = $("width");
         this.elements.height = $("height");
 
         this.elements.width.value = this.diagram.width;
         this.elements.height.value = this.diagram.height;
+
+        this.elements.sobre = $("sobre");
+        this.elements.coding = $("coding");
+        this.elements.coding.value = this.knot.coding_part;
+
+        this.elements.generate = $("generate");
     },
 
     connect_signals: function() {
+        /*
         connect(this.elements.parts, "onchange", bind(this.updateKnot, this));
         connect(this.elements.bights, "onchange", bind(this.updateKnot, this));
+        connect(this.elements.sobre, "onchange", bind(this.updateKnot, this));
+        connect(this.elements.coding, "onchange", bind(this.updateKnot, this));
 
         connect(this.elements.width, "onchange", bind(this.updateDiagram, this));
         connect(this.elements.height, "onchange", bind(this.updateDiagram, this));
+        */
+        connect(this.elements.generate, "onclick", bind(function() {
+            this.updateKnot();
+            this.updateDiagram();
+        }, this));
 
+/*
         connect(this.elements.animate_button, "onclick", bind(function() {
             this.paused = !this.paused
-            if(!this.paused) {
+            var ctx = this.elements.canvas.getContext("2d");
+            if(this.paused) {
+                ctx.restore();
+
+                this.diagram.clear(ctx);
+                this.diagram.set_origin(ctx);
+                this.diagram.draw(ctx, this.animation_time);
+            } else {
+                ctx.save();
+                this.diagram.clear(ctx);
+                this.diagram.set_origin(ctx);
                 this.animate();
             }
         }, this));
+        */
     },
 
     updateDiagram: function() {
@@ -69,10 +97,14 @@ KnotUI.prototype = {
         try {
             var parts = parseInt(this.elements.parts.value);
             var bights = parseInt(this.elements.bights.value);
-            var knot = new Knot(parts, bights);
+            var coding = this.elements.coding.value;
+            var sobre = this.elements.sobre.checked;
+            var knot = new Knot(parts, bights, sobre, coding);
 
             this.knot.parts = parts;
             this.knot.bights = bights;
+            this.knot.sobre = sobre;
+            this.knot.coding_part = coding;
             this.knot.solve();
 
             this.update_half_cycles();
@@ -95,10 +127,15 @@ KnotUI.prototype = {
         this.elements.canvas.width = this.diagram.width;
         this.elements.canvas.height = this.diagram.height+60;
         var ctx = this.elements.canvas.getContext("2d");
+        ctx.save();
+        this.diagram.clear(ctx);
+        this.diagram.set_origin(ctx);
         this.diagram.draw(ctx, 1);
+        ctx.restore();
     },
     animate: function() {
         var ctx = this.elements.canvas.getContext("2d");
+        this.diagram.clear(ctx);
         this.diagram.draw(ctx, this.animation_time);
         this.animation_time += this.animation_dt;
         if(this.animation_time > 1) {
@@ -149,6 +186,9 @@ KnotDiagram.prototype = {
             for(var j = 0; j < this.knot.parts-1; j++) {
                 var over = (this.knot.sobre && this.knot.coding[j] == "/") ||
                            (!this.knot.sobre && this.knot.coding[j] == "\\");
+                if(i%2 && ((this.knot.parts+1)%2)) {
+                    over = !over;
+                }
 
                 this.half_cycles[i].push(new KnotPiece({
                     diagram: this,
@@ -169,16 +209,18 @@ KnotDiagram.prototype = {
             }));
         }
     },
+    draw_between: function(ctx, hc, t1, t2) {
+        // TODO
+    },
+    draw_between: function(ctx, t1, t2) {
+        // TODO
+    },
+
     draw: function(ctx, hc, t) {
-        this.clear(ctx);
-        ctx.save();
-        this.set_origin(ctx);
-        ctx.restore();
+        // TODO
     },
     draw: function(ctx, t) {
-        this.clear(ctx);
         ctx.save();
-        this.set_origin(ctx);
         var end_i = this.half_cycles.length*t;
         for(var i = 0; i < Math.floor(end_i); i++) {
             for(var j = 0; j < this.half_cycles[i].length; j++) {
@@ -209,9 +251,7 @@ KnotDiagram.prototype = {
     },
 
     clear: function(ctx) {
-        ctx.save();
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.restore();
     }
 };
 
@@ -290,9 +330,20 @@ KnotPiece.prototype = {
             if(x1 < 0) {
                 x1 += this.diagram.width;
                 x2 += this.diagram.width;
+                x3 += this.diagram.width;
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
+                ctx.lineTo(x3, y3);
+                ctx.stroke();
+            } else if(x3 > this.diagram.width) {
+                x1 -= this.diagram.width;
+                x2 -= this.diagram.width;
+                x3 -= this.diagram.width;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineTo(x3, y3);
                 ctx.stroke();
             }
             ctx.restore();
