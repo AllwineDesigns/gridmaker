@@ -1,3 +1,8 @@
+/* knot.js by John Allwine jallwine86@yahoo.com
+ *
+ * Copyright (c) 2008 John Allwine
+ *
+ */
 function KnotUI() {
     this.init();
 }
@@ -410,6 +415,61 @@ KnotPiece.prototype = {
 
         ctx.restore();
     },
+
+    draw_up: function(ctx, x, y, t) {
+        ctx.save();
+        if(this.uo == 'O') {
+            ctx.fillStyle = this.diagram.over_color;
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            ctx.fillStyle = this.diagram.under_color;
+            ctx.globalCompositeOperation = 'destination-over';
+        }
+        ctx.lineWidth = 1;
+        
+        ctx.translate(x, y);
+        ctx.rotate(this.diagram.angle);
+        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.restore();
+    },
+    draw_down: function(ctx, x, y, t) {
+        ctx.save();
+        if(this.uo == 'O') {
+            ctx.fillStyle = this.diagram.over_color;
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            ctx.fillStyle = this.diagram.under_color;
+            ctx.globalCompositeOperation = 'destination-over';
+        }
+        ctx.lineWidth = 1;
+        
+        ctx.translate(x, y);
+        ctx.rotate(-this.diagram.angle);
+        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.restore();
+    },
     draw_type: {
         bottom_miter: function(ctx, t) {
             this.draw_bottom_miter(ctx, this.x, this.y, t);
@@ -428,132 +488,20 @@ KnotPiece.prototype = {
             }
         },
         up: function(ctx, t) {
-            ctx.save();
-            if(this.uo == 'O') {
-                ctx.fillStyle = this.diagram.over_color;
-                ctx.globalCompositeOperation = 'source-over';
-            } else {
-                ctx.fillStyle = this.diagram.under_color;
-                ctx.globalCompositeOperation = 'destination-over';
+            this.draw_up(ctx, this.x, this.y, t);
+            if(this.x-1 < 0) {
+                this.draw_up(ctx, this.x+this.diagram.width, this.y, t);
+            } else if(this.x+1 > this.diagram.width) {
+                this.draw_up(ctx, this.x-this.diagram.width, this.y, t);
             }
-            ctx.lineWidth = 1;
-            ctx.strokeStle = "rgba(0,0,0,1)";
-            
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.diagram.angle);
-            ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
-
-            ctx.beginPath();
-            ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-            ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-            ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-            ctx.stroke();
-            ctx.restore();
-
-            if(this.x-this.diagram.part_dist*.5 < 0) {
-                ctx.save();
-                ctx.translate(this.x+this.diagram.width, this.y);
-                ctx.rotate(this.diagram.angle);
-                ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.stroke();
-                ctx.restore();
-            } else if(this.x+this.diagram.part_dist*.5 > this.diagram.width) {
-                ctx.save();
-                ctx.translate(this.x-this.diagram.width, this.y);
-                ctx.rotate(this.diagram.angle);
-                ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.stroke();
-                ctx.restore();
-            }
-
-            ctx.restore();
         },
         down: function(ctx, t) {
-            ctx.save();
-            if(this.uo == 'O') {
-                ctx.fillStyle = this.diagram.over_color;
-                ctx.globalCompositeOperation = 'source-over';
-            } else {
-                ctx.fillStyle = this.diagram.under_color;
-                ctx.globalCompositeOperation = 'destination-over';
+            this.draw_down(ctx, this.x, this.y, t);
+            if(this.x-1 < 0) {
+                this.draw_down(ctx, this.x+this.diagram.width, this.y, t);
+            } else if(this.x+1 > this.diagram.width) {
+                this.draw_down(ctx, this.x-this.diagram.width, this.y, t);
             }
-            ctx.lineWidth = 1;
-            ctx.strokeStle = "rgba(0,0,0,1)";
-            
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            ctx.rotate(-this.diagram.angle);
-            ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
-
-            ctx.beginPath();
-            ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-            ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-            ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-            ctx.stroke();
-            ctx.restore();
-
-            if(this.x-this.diagram.part_dist*.5 < 0) {
-                ctx.save();
-                ctx.translate(this.x+this.diagram.width, this.y);
-                ctx.rotate(-this.diagram.angle);
-                ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.stroke();
-                ctx.restore();
-            } else if(this.x+this.diagram.part_dist*.5 > this.diagram.width) {
-                ctx.save();
-                ctx.translate(this.x-this.diagram.width, this.y);
-                ctx.rotate(-this.diagram.angle);
-                ctx.fillRect(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5, this.diagram.part_dist, this.diagram.strand_width);
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
-                ctx.stroke();
-                ctx.restore();
-            }
-
-            ctx.restore();
         }
     },
     draw: function(ctx, t) {
