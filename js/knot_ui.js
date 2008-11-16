@@ -200,7 +200,7 @@ KnotDiagram.prototype = {
         this.dx = this.part_dist*Math.cos(this.angle)
         this.dy = this.part_dist*Math.sin(this.angle)
 
-        this.absolute_height = this.height + this.strand_width/Math.cos(Math.PI*.5-this.angle)+4;
+        this.absolute_height = this.height + this.strand_width/Math.cos(Math.PI*.5-this.angle)+40;
 
         this.half_cycles = [];
 
@@ -244,8 +244,25 @@ KnotDiagram.prototype = {
     draw: function(ctx, hc, t) {
         // TODO
     },
+    draw_pins: function(ctx) {
+
+        for(var i = 0; i <= this.knot.bights; i++) {
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.translate(this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
+            ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+            ctx.restore();
+
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.translate(this.bight_dist*i, this.absolute_height-5);
+            ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+            ctx.restore();
+        }
+    },
     draw: function(ctx, t) {
         ctx.save();
+        this.draw_pins(ctx);
         var end_i = this.half_cycles.length*t;
         for(var i = 0; i < Math.floor(end_i); i++) {
             for(var j = 0; j < this.half_cycles[i].length; j++) {
@@ -272,7 +289,7 @@ KnotDiagram.prototype = {
     },
     set_origin: function(ctx) {
         ctx.scale(1, -1);
-        ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+2));
+        ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20));
     },
 
     clear: function(ctx) {
