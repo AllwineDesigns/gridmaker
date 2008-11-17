@@ -32,15 +32,15 @@ KnotUI.prototype = {
             var query_str = window.location.href.substring(window.location.href.indexOf("?")+1);
             qry_params = parseQueryString(query_str, true);
             for(key in qry_params) {
-                try {
-                    var num = parseFloat(qry_params[key]);
-                    qry_params[key] = num;
-                } catch(err) {
-                    try {
-                        var bool = parseBool(qry_params[key]);
-                        qry_params[key] = bool;
-                    } catch(err) {
+                var num = parseFloat(qry_params[key]);
+                if(isNaN(num)) {
+                    if(qry_params[key] == 'true') {
+                        qry_params[key] = true;
+                    } else if(qry_params[key] == 'false') {
+                        qry_params[key] = false;
                     }
+                } else {
+                    qry_params[key] = num;
                 }
             }
         }
@@ -80,6 +80,8 @@ KnotUI.prototype = {
         this.elements.height.value = this.diagram.height;
 
         this.elements.sobre = $("sobre");
+        this.elements.sobre.checked = this.knot.sobre;
+
         this.elements.coding = $("coding");
         this.elements.coding.value = this.knot.coding_part;
 
@@ -299,19 +301,21 @@ KnotDiagram.prototype = {
         // TODO
     },
     draw_pins: function(ctx) {
+        try {
+            for(var i = 0; i <= this.knot.bights; i++) {
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.translate(this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
+                ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+                ctx.restore();
 
-        for(var i = 0; i <= this.knot.bights; i++) {
-            ctx.save();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.translate(this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
-            ctx.mozDrawText("" + ((i%this.knot.bights)+1));
-            ctx.restore();
-
-            ctx.save();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.translate(this.bight_dist*i, this.absolute_height-5);
-            ctx.mozDrawText("" + ((i%this.knot.bights)+1));
-            ctx.restore();
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.translate(this.bight_dist*i, this.absolute_height-5);
+                ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+                ctx.restore();
+            }
+        } catch(err) {
         }
     },
     draw: function(ctx, t) {
