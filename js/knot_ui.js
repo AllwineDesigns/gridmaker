@@ -8,22 +8,53 @@ function KnotUI() {
 }
 
 KnotUI.prototype = {
-    knot: new Knot(11, 7, false, "\\/"),
+    default_params: {
+        parts: 11,
+        bights: 7,
+        coding: '\\/',
+        sobre: false,
+        width: 500,
+        height: 400,
+        strand_width: 10,
+        over_color: "white",
+        under_color: "white",
+        miter_color: "white"
+    },
+    params: {
+    },
     animation_time: 0,
     animation_dt: .01,
     paused: true,
     elements: {},
     init: function() {
+        var qry_params = {};
+        if(window.location.href.indexOf("?") > -1) {
+            var query_str = window.location.href.substring(window.location.href.indexOf("?")+1);
+            qry_params = parseQueryString(query_str, true);
+            for(key in qry_params) {
+                try {
+                    var num = parseFloat(qry_params[key]);
+                    qry_params[key] = num;
+                } catch(err) {
+                    try {
+                        var bool = parseBool(qry_params[key]);
+                        qry_params[key] = bool;
+                    } catch(err) {
+                    }
+                }
+            }
+        }
+        update(this.params, this.default_params, qry_params);
+
+        this.knot = new Knot(this.params.parts, this.params.bights, this.params.sobre, this.params.coding);
         this.diagram = new KnotDiagram({
             knot: this.knot,
-            width: 300,
-            height: 200,
-            under_color: 'white',
-            over_color: 'white',
-            miter_color: 'white',
-//            part_dist: 20,
-//            bight_dist: 30,
-            strand_width: 10
+            width: this.params.width,
+            height: this.params.height,
+            under_color: this.params.under_color,
+            over_color: this.params.over_color,
+            miter_color: this.params.miter_color,
+            strand_width: this.params.strand_width
         });
         this.init_elements();
         this.connect_signals();
@@ -64,22 +95,40 @@ KnotUI.prototype = {
         this.elements.miter_color = $("miter_color");
         this.elements.miter_color.value = this.diagram.miter_color;
 
+        this.elements.link = $("knot_link");
+
         this.elements.generate = $("generate");
     },
 
-    connect_signals: function() {
-        /*
-        connect(this.elements.parts, "onchange", bind(this.update_knot, this));
-        connect(this.elements.bights, "onchange", bind(this.update_knot, this));
-        connect(this.elements.sobre, "onchange", bind(this.update_knot, this));
-        connect(this.elements.coding, "onchange", bind(this.update_knot, this));
+    update_params: function() {
+        this.params.width = parseInt(this.elements.width.value);
+        this.params.height = parseInt(this.elements.height.value);
+        this.params.parts = parseInt(this.elements.parts.value);
+        this.params.bights = parseInt(this.elements.bights.value);
+        this.params.coding = this.elements.coding.value;
+        this.params.sobre = this.elements.sobre.checked;
+        this.params.over_color = this.elements.over_color.value;
+        this.params.under_color = this.elements.under_color.value;
+        this.params.miter_color = this.elements.miter_color.value;
+        this.params.strand_width = parseInt(this.elements.strand_width.value);
 
-        connect(this.elements.width, "onchange", bind(this.update_diagram, this));
-        connect(this.elements.height, "onchange", bind(this.update_diagram, this));
-        */
+        for(key in this.params) {
+            if(this.params[key] == this.default_params[key]) {
+                delete this.params[key];
+            }
+        }
+    },
+
+    update_link: function() {
+        this.update_params();
+        this.elements.link.href = "?" + queryString(this.params);
+    },
+
+    connect_signals: function() {
         connect(this.elements.generate, "onclick", bind(function() {
             this.update_knot();
             this.update_diagram();
+            this.update_link();
         }, this));
 
 /*
