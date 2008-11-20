@@ -3,6 +3,26 @@
  * Copyright (c) 2008 John Allwine
  *
  */
+
+function getSelected(select) {
+    var sel = [];
+    forEach(select.options, function(o) {
+        if(o.selected) {
+            sel.push(o.value);
+        }
+    });
+    return sel[0];
+}
+function setSelected(select, value) {
+    forEach(select.options, function(o) {
+        if(o.value == value) {
+            o.selected = true;
+        } else {
+            o.selected = false;
+        }
+    });
+}
+
 function KnotUI() {
     this.init();
 }
@@ -47,6 +67,7 @@ KnotUI.prototype = {
         update(this.params, this.default_params, qry_params);
 
         this.knot = new Knot(this.params.parts, this.params.bights, this.params.sobre, this.params.coding);
+        this.update_title();
         this.diagram = new KnotDiagram({
             knot: this.knot,
             width: this.params.width,
@@ -54,7 +75,8 @@ KnotUI.prototype = {
             under_color: this.params.under_color,
             over_color: this.params.over_color,
             miter_color: this.params.miter_color,
-            strand_width: this.params.strand_width
+            strand_width: this.params.strand_width,
+            orient: this.params.orient
         });
         this.init_elements();
         this.connect_signals();
@@ -97,7 +119,8 @@ KnotUI.prototype = {
         this.elements.miter_color = $("miter_color");
         this.elements.miter_color.value = this.diagram.miter_color;
 
-        this.elements.link = $("knot_link");
+        this.elements.orient = $("orient");
+        setSelected(this.elements.orient, this.diagram.orient);
 
         this.elements.generate = $("generate");
     },
@@ -113,6 +136,7 @@ KnotUI.prototype = {
         this.params.under_color = this.elements.under_color.value;
         this.params.miter_color = this.elements.miter_color.value;
         this.params.strand_width = parseInt(this.elements.strand_width.value);
+        this.params.orient = getSelected(this.elements.orient);
 
         for(key in this.params) {
             if(this.params[key] == this.default_params[key]) {
@@ -121,16 +145,21 @@ KnotUI.prototype = {
         }
     },
 
-    update_link: function() {
+    update_url: function() {
         this.update_params();
-        this.elements.link.href = "?" + queryString(this.params);
+        document.location = "?" + queryString(this.params);
+    },
+
+    update_title: function() {
+        document.title = "Turks Heads - " + this.knot.parts + "x" + this.knot.bights + " " + this.knot.coding_part;
     },
 
     connect_signals: function() {
         connect(this.elements.generate, "onclick", bind(function() {
-            this.update_knot();
-            this.update_diagram();
-            this.update_link();
+//            this.update_knot();
+//            this.update_title();
+//            this.update_diagram();
+            this.update_url();
         }, this));
 
 /*
@@ -141,12 +170,12 @@ KnotUI.prototype = {
                 ctx.restore();
 
                 this.diagram.clear(ctx);
-                this.diagram.set_origin(ctx);
+                this.diagram.set_transform(ctx);
                 this.diagram.draw(ctx, this.animation_time);
             } else {
                 ctx.save();
                 this.diagram.clear(ctx);
-                this.diagram.set_origin(ctx);
+                this.diagram.set_transform(ctx);
                 this.animate();
             }
         }, this));
@@ -163,8 +192,9 @@ KnotUI.prototype = {
                                        strand_width: strand_width,
                                        over_color: this.elements.over_color.value,
                                        under_color: this.elements.under_color.value,
-                                       miter_color: this.elements.miter_color.value});
-            this.elements.canvas.width = this.diagram.width;
+                                       miter_color: this.elements.miter_color.value,
+                                       orient: getSelected(this.elements.orient)});
+            this.elements.canvas.width = this.diagram.absolute_width;
             this.elements.canvas.height = this.diagram.absolute_height;
             this.draw_knot();
         } catch(err) {
@@ -205,7 +235,7 @@ KnotUI.prototype = {
         var ctx = this.elements.canvas.getContext("2d");
         ctx.save();
         this.diagram.clear(ctx);
-        this.diagram.set_origin(ctx);
+        this.diagram.set_transform(ctx);
         this.diagram.draw(ctx, 1);
         ctx.restore();
     },
@@ -231,7 +261,8 @@ function KnotDiagram(opts) {
         strand_width: opts.strand_width,
         over_color: opts.over_color,
         under_color: opts.under_color,
-        miter_color: opts.miter_color
+        miter_color: opts.miter_color,
+        orient: opts.orient
     });
 }
 
@@ -244,19 +275,42 @@ KnotDiagram.prototype = {
         this.calc_knot();
     },
     calc_knot: function() {
-        this.bight_dist = this.width/this.knot.bights;
+        if(this.orient == "vertical") {
+            this.bight_dist = this.width/this.knot.bights;
+        } else {
+            this.bight_dist = this.height/this.knot.bights;
+        }
 
         var to_pin = this.knot.half_cycles[0].to_pin + (Math.floor(this.knot.n/2))*this.knot.bights;
-        var x = (to_pin-1+.5*(this.knot.parts%2))*this.bight_dist;
-        var hyp = Math.sqrt(x*x+this.height*this.height);
+        var adj = (to_pin-1+.5*(this.knot.parts%2))*this.bight_dist;
+
+        var hyp;
+
+        if(this.orient == "vertical") {
+            hyp = Math.sqrt(adj*adj+this.height*this.height);
+        } else {
+            hyp = Math.sqrt(adj*adj+this.width*this.width);
+        }
 
         this.part_dist = hyp/this.knot.parts;
 
-        this.angle = Math.acos(x/hyp);
-        this.dx = this.part_dist*Math.cos(this.angle)
-        this.dy = this.part_dist*Math.sin(this.angle)
+        this.angle = Math.acos(adj/hyp);
 
-        this.absolute_height = this.height + this.strand_width/Math.cos(Math.PI*.5-this.angle)+40;
+        if(this.orient == "vertical") {
+            this.dx = this.part_dist*Math.cos(this.angle);
+            this.dy = this.part_dist*Math.sin(this.angle);
+        } else {
+            this.dx = this.part_dist*Math.sin(this.angle);
+            this.dy = -this.part_dist*Math.cos(this.angle);
+        }
+
+        if(this.orient == "vertical") {
+            this.absolute_height = this.height + this.strand_width/Math.cos(Math.PI*.5-this.angle)+40;
+            this.absolute_width = this.width;
+        } else {
+            this.absolute_width = this.width + this.strand_width/Math.cos(Math.PI*.5-this.angle)+40;
+            this.absolute_height = this.height;
+        }
 
         this.half_cycles = [];
 
@@ -265,27 +319,48 @@ KnotDiagram.prototype = {
         for(var i = 0; i < this.knot.half_cycles.length; i++) {
             this.half_cycles[i] = [];
             for(var j = 0; j < this.knot.parts-1; j++) {
-                var over = (this.knot.sobre && this.knot.coding[j] == "/") ||
-                           (!this.knot.sobre && this.knot.coding[j] == "\\");
+                var over = (this.knot.sobre && this.knot.coding[j] == "\\") ||
+                           (!this.knot.sobre && this.knot.coding[j] == "/");
                 if(i%2 && ((this.knot.parts+1)%2)) {
                     over = !over;
                 }
 
+                var x;
+                var y;
+                var type;
+                if(this.orient == "vertical") {
+                    x = (startx+(j+1)*this.dx) % this.width;
+                    y = starty+((i%2) ? -1 : 1)*(j+1)*this.dy;
+                    type = (i%2) ? 'down' : 'up';
+                } else {
+                    x = startx+((i%2) ? -1 : 1)*(j+1)*this.dx;
+                    y = (starty+(j+1)*this.dy) % this.height;
+                    type = (i%2) ? 'left' : 'right';
+                }
+
                 this.half_cycles[i].push(new KnotPiece({
                     diagram: this,
-                    x: (startx+(j+1)*this.dx) % this.width,
-                    y: starty+((i%2) ? -1 : 1)*(j+1)*this.dy,
-                    type: (i%2) ? 'down' : 'up',
+                    x: x,
+                    y: y,
+                    type: type,
                     uo: over ? 'O' : 'U'
                 }));
             }
-            startx = (startx+this.knot.parts*this.dx) % this.width;
-            starty = starty+((i%2) ? -1 : 1)*this.knot.parts*this.dy;
+
+            if(this.orient == "vertical") {
+                startx = (startx+this.knot.parts*this.dx) % this.width;
+                starty = starty+((i%2) ? -1 : 1)*this.knot.parts*this.dy;
+                type = (i%2) ? 'bottom_miter' : 'top_miter';
+            } else {
+                startx = startx+((i%2) ? -1 : 1)*this.knot.parts*this.dx;
+                starty = (starty+this.knot.parts*this.dy) % this.height;
+                type = (i%2) ? 'left_miter' : 'right_miter';
+            }
             this.half_cycles[i].push(new KnotPiece({
                 diagram: this,
                 x: startx,
                 y: starty,
-                type: (i%2) ? 'bottom_miter' : 'top_miter',
+                type: type,
                 uo: 'U'
             }));
         }
@@ -302,18 +377,34 @@ KnotDiagram.prototype = {
     },
     draw_pins: function(ctx) {
         try {
-            for(var i = 0; i <= this.knot.bights; i++) {
-                ctx.save();
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-                ctx.translate(this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
-                ctx.mozDrawText("" + ((i%this.knot.bights)+1));
-                ctx.restore();
+            if(this.orient == "vertical") {
+                for(var i = 0; i <= this.knot.bights; i++) {
+                    ctx.save();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.translate(this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
+                    ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+                    ctx.restore();
 
-                ctx.save();
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-                ctx.translate(this.bight_dist*i, this.absolute_height-5);
-                ctx.mozDrawText("" + ((i%this.knot.bights)+1));
-                ctx.restore();
+                    ctx.save();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.translate(this.bight_dist*i, this.absolute_height-5);
+                    ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+                    ctx.restore();
+                }
+            } else {
+                for(var i = 0; i <= this.knot.bights; i++) {
+                    ctx.save();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.translate(this.absolute_width-15, this.bight_dist*(i+.5*(this.knot.parts%2))+15);
+                    ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+                    ctx.restore();
+
+                    ctx.save();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.translate(5, this.bight_dist*i+15);
+                    ctx.mozDrawText("" + ((i%this.knot.bights)+1));
+                    ctx.restore();
+                }
             }
         } catch(err) {
         }
@@ -345,9 +436,14 @@ KnotDiagram.prototype = {
         }
         ctx.restore();
     },
-    set_origin: function(ctx) {
+    set_transform: function(ctx) {
         ctx.scale(1, -1);
-        ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20));
+
+        if(this.orient == "vertical") {
+            ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20));
+        } else {
+            ctx.translate((this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20), 0);
+        }
     },
 
     clear: function(ctx) {
@@ -523,7 +619,119 @@ KnotPiece.prototype = {
 
         ctx.restore();
     },
+    draw_right: function(ctx, x, y, t) {
+        ctx.save();
+        if(this.uo == 'O') {
+            ctx.fillStyle = this.diagram.over_color;
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            ctx.fillStyle = this.diagram.under_color;
+            ctx.globalCompositeOperation = 'destination-over';
+        }
+        ctx.lineWidth = 1;
+        
+        ctx.translate(x, y);
+        ctx.rotate(Math.PI/2+this.diagram.angle);
+        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.restore();
+    },
+    draw_left: function(ctx, x, y, t) {
+        ctx.save();
+        if(this.uo == 'O') {
+            ctx.fillStyle = this.diagram.over_color;
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            ctx.fillStyle = this.diagram.under_color;
+            ctx.globalCompositeOperation = 'destination-over';
+        }
+        ctx.lineWidth = 1;
+        
+        ctx.translate(x, y);
+        ctx.rotate(Math.PI/2-this.diagram.angle);
+        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
+        ctx.stroke();
+
+        ctx.restore();
+    },
     draw_type: {
+        right: function(ctx, t) {
+            this.draw_right(ctx, this.x, this.y, t);
+            if(this.y+1 > 0) {
+                this.draw_right(ctx, this.x, this.y-this.diagram.height, t);
+            } else if(this.y-1 < -this.diagram.height) {
+                this.draw_right(ctx, this.x, this.y+this.diagram.height, t);
+            }
+        },
+        left: function(ctx, t) {
+            this.draw_left(ctx, this.x, this.y, t);
+            if(this.y+1 > 0) {
+                this.draw_left(ctx, this.x, this.y-this.diagram.height, t);
+            } else if(this.y-1 < -this.diagram.height) {
+                this.draw_left(ctx, this.x, this.y+this.diagram.height, t);
+            }
+        },
+        right_miter: function(ctx, t) {
+            ctx.save();
+            ctx.translate(this.x, this.y)
+            ctx.rotate(-Math.PI/2)
+            this.draw_top_miter(ctx, 0, 0, t);
+            ctx.restore();
+
+            if(this.y+1 > 0) {
+                ctx.save();
+                ctx.translate(this.x, this.y-this.diagram.height)
+                ctx.rotate(-Math.PI/2)
+                this.draw_top_miter(ctx, 0, 0, t);
+                ctx.restore();
+            } else if(this.y-1 < -this.diagram.height) {
+                ctx.save();
+                ctx.translate(this.x, this.y+this.diagram.height)
+                ctx.rotate(-Math.PI/2)
+                this.draw_top_miter(ctx, 0, 0, t);
+                ctx.restore();
+            }
+        },
+        left_miter: function(ctx, t) {
+            ctx.save();
+            ctx.translate(this.x, this.y)
+            ctx.rotate(-Math.PI/2)
+            this.draw_bottom_miter(ctx, 0, 0, t);
+            ctx.restore();
+
+            if(this.y+1 > 0) {
+                ctx.save();
+                ctx.translate(this.x, this.y-this.diagram.height)
+                ctx.rotate(-Math.PI/2)
+                this.draw_bottom_miter(ctx, 0, 0, t);
+                ctx.restore();
+            } else if(this.y-1 < -this.diagram.height) {
+                ctx.save();
+                ctx.translate(this.x, this.y+this.diagram.height)
+                ctx.rotate(-Math.PI/2)
+                this.draw_bottom_miter(ctx, 0, 0, t);
+                ctx.restore();
+            }
+        },
         bottom_miter: function(ctx, t) {
             this.draw_bottom_miter(ctx, this.x, this.y, t);
             if(this.x-1 < 0) {
