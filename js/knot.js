@@ -15,21 +15,10 @@ function HalfCycle(d) {
 }
 
 HalfCycle.prototype = {
-    dir: 'L',
     from_pin: 0,
     to_pin: 0,
-    init: function(d) {
-        this.dir = d;
+    init: function() {
         this.run_list = [];
-    },
-    toString: function() {
-        var from_side = (this.dir == 'L') ? 'R' : 'L';
-        var to_side = (this.dir == 'L') ? 'L' : 'R';
-
-        var str = "from " + from_side + " pin " + this.from_pin + " " + (this.run_list.length == 0 ? '' : (this.run_list_str() + " ")) +
-                  "to " + to_side + " pin " + this.to_pin;
-
-        return str;
     },
     run_list_str: function() {
         var run_list = [];
@@ -170,7 +159,7 @@ Knot.prototype = {
     },
     fill_half_cycles: function() {
         var going_right = true;
-        var hc = new HalfCycle('R');
+        var hc = new HalfCycle();
         hc.from_pin = this.pins[0];
         hc.to_pin = this.pins[1];
 
@@ -178,7 +167,7 @@ Knot.prototype = {
 
         for(var hc_num = 2; hc_num <= 2*this.bights; hc_num++) {
             going_right = !going_right;
-            hc = new HalfCycle(going_right ? 'R' : 'L');
+            hc = new HalfCycle();
             hc.from_pin = this.pins[hc_num-1];
             hc.to_pin = this.pins[hc_num];
 

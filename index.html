@@ -5,32 +5,115 @@
 
 <script type="text/javascript" src="js/MochiKit.js"></script>
 <script type="text/javascript" src="js/knot_ui.js"></script>
-<style>
-.hc {
-}
-
-div.hc:hover {
-    background-color: #ccc;
-}
-</style>
+<link href="styles/knots.css" type="text/css" rel="stylesheet"/>
 </head>
 <body>
 
+<div class="panel" style="height: 100%">
+
+<div class="subpanel">
+    <div class="subpanel_title">Diagram</div>
+    <div class="subpanel_content">
+        <div class="component">
+            <div><span class="bold">Width x Height</span></div>
+            <div>
+                <input type="text" id="width" size=2/> x <input type="text" id="height" size=2/>
+            </div>
+
+            <div style="margin-top: 10px"><span class="bold">Strand Width</span></div>
+            <div><input type="text" id="strand_width" size=2/></div>
+
+            <div style="margin-top: 10px"><span class="bold">Bights</span></div> 
+            <div><input type="checkbox" id="swap_bight_order"/> Swap order<br/></div>
+            <div style="margin-top: 5px"><select id="orient"><option value="vertical" selected="selected">Top/Bottom</option><option value="horizontal">Left/Right</option></select></div>
+        </div>
+        <div class="last_component">
+            <div><span class="bold">Over Color</span></div>
+            <div><input type="text" id="over_color" size=6/></div>
+
+            <div style="margin-top: 10px"><span class="bold">Under Color</span></div>
+            <div><input type="text" id="under_color" size=6/></div>
+            
+            <div style="margin-top: 10px"><span class="bold">Miter Color</span></div> 
+            <div><input type="text" id="miter_color" size=6/></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="subpanel">
+    <div class="subpanel_title">Knot</div>
+    <div class="subpanel_content">
+        <div class="last_component">
+            <div>
+            <span class="bold">Parts x Bights</span><br/> 
+            <div>
+                <input type="text" id="parts" size=2/> x <input type="text" id="bights" size=2/> <br/>
+            </div>
+            </div>
+
+            <div style="margin-top: 15px">
+            <span class="bold">Coding</span><br/>
+            <div>
+                <input type="checkbox" id="sobre"/> Sobre
+            </div>
+            <div style="margin-top: 5px">
+                <input type="text" id="coding" size=10/>
+            </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+</div>
+
+<div class="clear"></div>
+
+<div style="float: left; margin: 5px">
+<button id="generate">Generate</button><br/>
+</div>
+
+<div class="clear"></div>
+</div>
+
+<div class="panel">
+    <div class="subpanel">
+    <div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">Half cycle</div>
+            <div class="small_component"><input type="text" id="half_cycle" size=2/></div>
+        </div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">From</div>
+            <div class="small_component" id="from_pin"></div>
+        </div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">Run list</div>
+            <div class="small_component" id="run_list"></div>
+        </div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">To</div>
+            <div class="small_component" id="to_pin"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div style="background-color: white">
+        <canvas id="knot_diagram" style="border: 1px solid #999999"></canvas>
+    </div>
+    </div>
+
+</div>
+<div class="panel">
+    <div class="subpanel">
+        <div class="subpanel_content">
+            <div id="half_cycles">
+            </div>
+        </div>
+    </div>
 <div>
-Parts x Bights: <input type="text" id="parts" size=2/> x <input type="text" id="bights" size=2/> Coding: <input type="text" id="coding" size=10/> <input type="checkbox" id="sobre"/> Sobre<br/>
-Width x Height: <input type="text" id="width" size=2/> x <input type="text" id="height" size=2/> Strand Width: <input type="text" id="strand_width" size=2/><br/>
-Over Color: <input type="text" id="over_color" size=6/> <br/>
-Under Color: <input type="text" id="under_color" size=6/> <br/>
-Miter Color: <input type="text" id="miter_color" size=6/> <br/>
-Bight boundaries: <select id="orient"><option value="vertical" selected="selected">Top/Bottom</option><option value="horizontal">Left/Right</option></select><br/>
-<button id="generate">Generate</button>
-</div>
-<!--<span id="animate_button" style="cursor: pointer">Animate</span>-->
 
-<canvas id="knot_diagram"></canvas>
-
-<div id="half_cycles">
-</div>
+<div class="clear"></div>
 
 
 </body>

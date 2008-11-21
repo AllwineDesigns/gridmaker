@@ -1,0 +1,68 @@
+body, table tr th {
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+.panel {
+    background-color: #eeeeee;
+    border-bottom: 1px solid #999999;
+    border-right: 1px solid #999999;
+    float: left;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.bold {
+    font-weight: bold;
+    font-size: smaller;
+}
+
+.clear {
+    clear: both;
+}
+
+.subpanel {
+    float: left;
+    padding: 10px;
+}
+
+.subpanel_title {
+    font-weight: bold;
+    font-size: larger;
+}
+.subpanel_content {
+    border: 1px solid #999999;
+    background-color: white;
+    padding: 10px;
+}
+
+.component {
+    float: left;
+    border-right: 1px solid #999999;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.last_component {
+    padding-left: 15px;
+    padding-right: 15px;
+    float: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.small_component {
+    background-color: white;
+    padding: 5px;
+    border: 1px solid #999999;
+    line-height: 25px;
+    height: 25px;
+
+}
+
+div.hc:hover {
+    background-color: #ccc;
+}
+
