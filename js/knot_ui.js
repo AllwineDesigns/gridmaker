@@ -233,8 +233,13 @@ KnotUI.prototype = {
         this.params.swap_bight_order = this.elements.swap_bight_order.checked;
 
         for(var i = 0; i < this.elements.half_cycle_colors.length; i++) {
+            var color_key = "hc" + (i+1) + "_color";
             if(this.elements.half_cycle_colors[i].value) {
-                this.params["hc" + (i+1) + "_color"] = this.elements.half_cycle_colors[i].value;
+                this.params[color_key] = this.elements.half_cycle_colors[i].value;
+            } else {
+                if(this.params[color_key]) {
+                    delete this.params[color_key];
+                }
             }
         }
 
