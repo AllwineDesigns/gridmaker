@@ -659,7 +659,6 @@ KnotPiece.prototype = {
         var w = this.diagram.strand_width*.5;
         var costheta = Math.cos(this.diagram.angle);
         var sintheta = Math.sin(this.diagram.angle);
-        var cosphi = Math.cos(Math.PI*.5-this.diagram.angle);
         var x1 = x+l*costheta-w*sintheta;
         var y1 = y-l*sintheta-w*costheta;
 
@@ -667,7 +666,7 @@ KnotPiece.prototype = {
         var y2 = y-l*sintheta+w*costheta;
 
         var x3 = x;
-        var y3 = y+w/cosphi;
+        var y3 = y+w/costheta;
 
         var x4 = x-l*costheta-w*sintheta;
         var y4 = y-l*sintheta+w*costheta;
@@ -676,7 +675,7 @@ KnotPiece.prototype = {
         var y5 = y-l*sintheta-w*costheta;
 
         var x6 = x;
-        var y6 = y-w/cosphi;
+        var y6 = y-w/costheta;
 
         ctx.save();
         ctx.lineWidth = 1;
@@ -689,20 +688,20 @@ KnotPiece.prototype = {
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.quadraticCurveTo(x3, y3, x4, y4);
         ctx.lineTo(x5, y5);
-        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.quadraticCurveTo(x6, y6, x1, y1);
         ctx.closePath()
         ctx.fill();
 
         ctx.beginPath();
         ctx.moveTo(x2, y2);
-        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.quadraticCurveTo(x3, y3, x4, y4);
         ctx.stroke();
 
         ctx.beginPath();
         ctx.moveTo(x5, y5);
-        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.quadraticCurveTo(x6, y6, x1, y1);
         ctx.stroke();
 
 
@@ -713,7 +712,6 @@ KnotPiece.prototype = {
         var w = this.diagram.strand_width*.5;
         var costheta = Math.cos(this.diagram.angle);
         var sintheta = Math.sin(this.diagram.angle);
-        var cosphi = Math.cos(Math.PI*.5-this.diagram.angle);
         var x1 = x+l*costheta-w*sintheta;
         var y1 = y+l*sintheta+w*costheta;
 
@@ -721,7 +719,7 @@ KnotPiece.prototype = {
         var y2 = y+l*sintheta-w*costheta;
 
         var x3 = x;
-        var y3 = y-w/cosphi;
+        var y3 = y-w/costheta;
 
         var x4 = x-l*costheta-w*sintheta;
         var y4 = y+l*sintheta-w*costheta;
@@ -730,7 +728,7 @@ KnotPiece.prototype = {
         var y5 = y+l*sintheta+w*costheta;
 
         var x6 = x;
-        var y6 = y+w/cosphi;
+        var y6 = y+w/costheta;
 
         ctx.save();
         ctx.lineWidth = 1;
@@ -743,20 +741,20 @@ KnotPiece.prototype = {
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.quadraticCurveTo(x3, y3, x4, y4);
         ctx.lineTo(x5, y5);
-        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.quadraticCurveTo(x6, y6, x1, y1);
         ctx.closePath()
         ctx.fill();
 
         ctx.beginPath();
         ctx.moveTo(x2, y2);
-        ctx.bezierCurveTo(x3, y3, x3, y3, x4, y4);
+        ctx.quadraticCurveTo(x3, y3, x4, y4);
         ctx.stroke();
 
         ctx.beginPath();
         ctx.moveTo(x5, y5);
-        ctx.bezierCurveTo(x6, y6, x6, y6, x1, y1);
+        ctx.quadraticCurveTo(x6, y6, x1, y1);
         ctx.stroke();
 
         ctx.restore();
