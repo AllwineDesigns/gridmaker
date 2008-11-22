@@ -118,3 +118,9 @@ div.hc:hover {
     border: 1px solid #999999;
     background-color: white;
 }
+
+#error {
+    color: red;
+    font-weight: bold;
+    line-height: 25px;
+}

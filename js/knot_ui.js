@@ -43,6 +43,7 @@ KnotUI.prototype = {
         swap_bight_order: false,
         show_colors: false
     },
+    qry_params: {},
     params: {
     },
     show_colors: false,
@@ -55,29 +56,38 @@ KnotUI.prototype = {
     paused: true,
     elements: {},
     init: function() {
-        var qry_params = {};
         if(window.location.href.indexOf("?") > -1) {
             var query_str = window.location.href.substring(window.location.href.indexOf("?")+1);
-            qry_params = parseQueryString(query_str);
-            for(key in qry_params) {
-                var num = parseFloat(qry_params[key]);
+            this.qry_params = parseQueryString(query_str);
+            for(key in this.qry_params) {
+                var num = parseFloat(this.qry_params[key]);
                 if(isNaN(num)) {
-                    if(qry_params[key] == 'true') {
-                        qry_params[key] = true;
-                    } else if(qry_params[key] == 'false') {
-                        qry_params[key] = false;
+                    if(this.qry_params[key] == 'true') {
+                        this.qry_params[key] = true;
+                    } else if(this.qry_params[key] == 'false') {
+                        this.qry_params[key] = false;
                     }
                 } else {
-                    qry_params[key] = num;
+                    this.qry_params[key] = num;
                 }
             }
         }
-        update(this.params, this.default_params, qry_params);
+        update(this.params, this.default_params, this.qry_params);
 
         this.show_colors = this.params.show_colors;
 
-        this.knot = new Knot(this.params.parts, this.params.bights, this.params.sobre, this.params.coding);
-        this.update_title();
+        try {
+            log(this.params.parts);
+            log(this.params.bights);
+            this.knot = new Knot(this.params.parts, this.params.bights, this.params.sobre, this.params.coding);
+        } catch(err) {
+            this.error = "parts and bights must have a gcd of 1";
+        }
+        log(this.error);
+
+        if(!this.error) {
+            this.update_title();
+        }
 
         var hc_colors = [];
         for(key in this.params) {
@@ -87,79 +97,84 @@ KnotUI.prototype = {
             }
         }
 
-        this.diagram = new KnotDiagram({
-            knot: this.knot,
-            width: this.params.width,
-            height: this.params.height,
-            under_color: this.params.under_color,
-            over_color: this.params.over_color,
-            miter_color: this.params.miter_color,
-            strand_width: this.params.strand_width,
-            orient: this.params.orient,
-            swap_bight_order: this.params.swap_bight_order,
-            hc_colors: hc_colors
-        });
+        if(!this.error) {
+            this.diagram = new KnotDiagram({
+                knot: this.knot,
+                width: this.params.width,
+                height: this.params.height,
+                under_color: this.params.under_color,
+                over_color: this.params.over_color,
+                miter_color: this.params.miter_color,
+                strand_width: this.params.strand_width,
+                orient: this.params.orient,
+                swap_bight_order: this.params.swap_bight_order,
+                hc_colors: hc_colors
+            });
+        }
         this.init_elements();
         this.connect_signals();
-        this.update_half_cycles();
-        this.update_diagram();
+
+        if(!this.error) {
+            this.update_half_cycles();
+            this.update_diagram();
+        }
     },
 
     init_elements: function() {
         this.elements.parts = $("parts");
         this.elements.bights = $("bights");
 
-        this.elements.parts.value = this.knot.parts;
-        this.elements.bights.value = this.knot.bights;
+        this.elements.parts.value = this.params.parts;
+        this.elements.bights.value = this.params.bights;
 
         this.elements.half_cycles = $("half_cycles");
-//        this.elements.animate_button = $("animate_button");
         this.elements.canvas = $("knot_diagram");
 
         this.elements.width = $("width");
         this.elements.height = $("height");
 
-        this.elements.width.value = this.diagram.width;
-        this.elements.height.value = this.diagram.height;
+        this.elements.width.value = this.params.width;
+        this.elements.height.value = this.params.height;
 
         this.elements.sobre = $("sobre");
-        this.elements.sobre.checked = this.knot.sobre;
+        this.elements.sobre.checked = this.params.sobre;
 
         this.elements.coding = $("coding");
-        this.elements.coding.value = this.knot.coding_part;
+        this.elements.coding.value = this.params.coding;
 
         this.elements.strand_width = $("strand_width");
-        this.elements.strand_width.value = this.diagram.strand_width;
+        this.elements.strand_width.value = this.params.strand_width;
 
         this.elements.over_color = $("over_color");
-        this.elements.over_color.value = this.diagram.over_color;
+        this.elements.over_color.value = this.params.over_color;
 
         this.elements.under_color = $("under_color");
-        this.elements.under_color.value = this.diagram.under_color;
+        this.elements.under_color.value = this.params.under_color;
 
         this.elements.miter_color = $("miter_color");
-        this.elements.miter_color.value = this.diagram.miter_color;
+        this.elements.miter_color.value = this.params.miter_color;
 
         this.elements.orient = $("orient");
-        setSelected(this.elements.orient, this.diagram.orient);
+        setSelected(this.elements.orient, this.params.orient);
 
         this.elements.swap_bight_order = $("swap_bight_order");
-        this.elements.swap_bight_order.checked = this.diagram.swap_bight_order;
+        this.elements.swap_bight_order.checked = this.params.swap_bight_order;
 
         this.elements.half_cycle = $("half_cycle");
-        this.elements.half_cycle.value = this.knot.half_cycles.length;
-
-        var dir = (this.knot.half_cycles.length+1)%2;
-        var hc = this.knot.half_cycles[this.knot.half_cycles.length-1];
-
         this.elements.from_pin = $("from_pin");
-        this.elements.from_pin.innerHTML = this.directions[this.diagram.orient][dir] + " pin " + hc.from_pin;
-
         this.elements.to_pin = $("to_pin");
-        this.elements.to_pin.innerHTML = this.directions[this.diagram.orient][1-dir] + " pin " + hc.to_pin;
-
         this.elements.run_list = $("run_list");
-        this.elements.run_list.innerHTML = hc.run_list_str();
+
+        if(!this.error) {
+            this.elements.half_cycle.value = this.knot.half_cycles.length;
+
+            var dir = (this.knot.half_cycles.length+1)%2;
+            var hc = this.knot.half_cycles[this.knot.half_cycles.length-1];
+
+            this.elements.from_pin.innerHTML = this.directions[this.diagram.orient][dir] + " pin " + hc.from_pin;
+            this.elements.to_pin.innerHTML = this.directions[this.diagram.orient][1-dir] + " pin " + hc.to_pin;
+            this.elements.run_list.innerHTML = hc.run_list_str();
+        }
 
         this.elements.next = $("next");
         this.elements.prev = $("prev");
@@ -172,30 +187,37 @@ KnotUI.prototype = {
         }
         this.elements.half_cycle_colors = []
 
-        var components_per_line = 10;
-        for(var i = 0; i < this.knot.half_cycles.length; i++) {
-            var color_input = INPUT({size: 6 });
+        if(!this.error) {
+            var components_per_line = 10;
+            for(var i = 0; i < this.knot.half_cycles.length; i++) {
+                var color_input = INPUT({size: 6 });
 
-            if(this.diagram.hc_colors[i]) {
-                color_input.value = this.diagram.hc_colors[i];
-            }
-            var color_component = DIV({ 'class': (i == this.knot.half_cycles.length-1 || (i+1)%components_per_line == 0) ? 'last_component' : 'component' },
-                                    DIV({}, SPAN({ 'class': "bold" }, "Half Cycle " + (i+1))),
-                                    DIV({}, color_input));
-            this.elements.half_cycle_color_panel.appendChild(color_component);
-            this.elements.half_cycle_colors[i] = color_input;
+                if(this.diagram.hc_colors[i]) {
+                    color_input.value = this.diagram.hc_colors[i];
+                }
+                var color_component = DIV({ 'class': (i == this.knot.half_cycles.length-1 || (i+1)%components_per_line == 0) ? 'last_component' : 'component' },
+                                        DIV({}, SPAN({ 'class': "bold" }, "Half Cycle " + (i+1))),
+                                        DIV({}, color_input));
+                this.elements.half_cycle_color_panel.appendChild(color_component);
+                this.elements.half_cycle_colors[i] = color_input;
 
-            if((i+1)%components_per_line == 0) {
-                this.elements.half_cycle_color_panel.appendChild(DIV({'class': "clear"}));
+                if((i+1)%components_per_line == 0) {
+                    this.elements.half_cycle_color_panel.appendChild(DIV({'class': "clear"}));
+                }
             }
+            this.elements.half_cycle_color_panel.appendChild(DIV({'class': "clear"}));
         }
-        this.elements.half_cycle_color_panel.appendChild(DIV({'class': "clear"}));
 
         this.elements.generate = $("generate");
+
+        this.elements.error = $("error");
+        if(this.error) {
+            this.elements.error.innerHTML = this.error;
+        }
     },
 
     update_params: function() {
-        this.params = {}
+        this.params = update({}, this.qry_params);
         this.params.show_colors = this.show_colors;
         this.params.width = parseInt(this.elements.width.value);
         this.params.height = parseInt(this.elements.height.value);
@@ -454,10 +476,10 @@ KnotDiagram.prototype = {
         }
 
         if(this.orient == "vertical") {
-            this.absolute_height = this.height + this.strand_width/Math.cos(Math.PI*.5-this.angle)+40;
+            this.absolute_height = this.height + this.strand_width/Math.cos(this.angle)+40;
             this.absolute_width = this.width;
         } else {
-            this.absolute_width = this.width + this.strand_width/Math.cos(Math.PI*.5-this.angle)+40;
+            this.absolute_width = this.width + this.strand_width/Math.cos(this.angle)+40;
             this.absolute_height = this.height;
         }
 
@@ -468,9 +490,17 @@ KnotDiagram.prototype = {
         for(var i = 0; i < this.knot.half_cycles.length; i++) {
             this.half_cycles[i] = [];
             for(var j = 0; j < this.knot.parts-1; j++) {
-                var over = (this.knot.sobre && this.knot.coding[j] == "\\") ||
+                var over;
+
+                if(i%2) {
+                    over = (this.knot.sobre && this.knot.coding[this.knot.coding.length-1-j] == "\\") ||
+                           (!this.knot.sobre && this.knot.coding[this.knot.coding.length-1-j] == "/");
+                } else {
+                    over = (this.knot.sobre && this.knot.coding[j] == "\\") ||
                            (!this.knot.sobre && this.knot.coding[j] == "/");
-                if(i%2 && ((this.knot.parts+1)%2)) {
+                }
+
+                if(i%2) {
                     over = !over;
                 }
 
@@ -619,17 +649,17 @@ KnotDiagram.prototype = {
             ctx.scale(1, -1);
 
             if(this.orient == "vertical") {
-                ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20));
+                ctx.translate(0, -this.height-(this.strand_width*.5/Math.cos(this.angle)+20));
             } else {
-                ctx.translate((this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20), 0);
+                ctx.translate((this.strand_width*.5/Math.cos(this.angle)+20), 0);
             }
         } else {
             if(this.orient == "vertical") {
                 ctx.scale(-1, -1);
-                ctx.translate(-this.absolute_width, -this.height-(this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20));
+                ctx.translate(-this.absolute_width, -this.height-(this.strand_width*.5/Math.cos(this.angle)+20));
             } else {
                 ctx.scale(1, 1);
-                ctx.translate((this.strand_width*.5/Math.cos(Math.PI*.5-this.angle)+20), this.absolute_height);
+                ctx.translate((this.strand_width*.5/Math.cos(this.angle)+20), this.absolute_height);
             }
         }
     },
