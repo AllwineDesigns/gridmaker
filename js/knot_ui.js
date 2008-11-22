@@ -778,7 +778,10 @@ KnotPiece.prototype = {
         
         ctx.translate(x, y);
         ctx.rotate(this.diagram.angle);
-        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        if(this.uo == 'O') {
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.beginPath();
         ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
@@ -789,6 +792,10 @@ KnotPiece.prototype = {
         ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.stroke();
+
+        if(this.uo == 'U') { // because of how compositing works, an under needs to be filled in after the lines are drawn
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.restore();
     },
@@ -808,7 +815,9 @@ KnotPiece.prototype = {
         
         ctx.translate(x, y);
         ctx.rotate(-this.diagram.angle);
-        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        if(this.uo == 'O') {
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.beginPath();
         ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
@@ -819,6 +828,10 @@ KnotPiece.prototype = {
         ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.stroke();
+
+        if(this.uo == 'U') { // because of how compositing works, an under needs to be filled in after the lines are drawn
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.restore();
     },
@@ -838,7 +851,10 @@ KnotPiece.prototype = {
         
         ctx.translate(x, y);
         ctx.rotate(Math.PI/2+this.diagram.angle);
-        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        if(this.uo == 'O') {
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.beginPath();
         ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
@@ -849,6 +865,10 @@ KnotPiece.prototype = {
         ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.stroke();
+
+        if(this.uo == 'U') {
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.restore();
     },
@@ -868,7 +888,10 @@ KnotPiece.prototype = {
         
         ctx.translate(x, y);
         ctx.rotate(Math.PI/2-this.diagram.angle);
-        ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+
+        if(this.uo == 'O') {
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.beginPath();
         ctx.moveTo(-this.diagram.part_dist*.5, -this.diagram.strand_width*.5);
@@ -879,6 +902,10 @@ KnotPiece.prototype = {
         ctx.moveTo(-this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.lineTo(this.diagram.part_dist*.5, this.diagram.strand_width*.5);
         ctx.stroke();
+
+        if(this.uo == 'U') {
+            ctx.fillRect(-this.diagram.part_dist*.5-.5, -this.diagram.strand_width*.5, this.diagram.part_dist+1, this.diagram.strand_width);
+        }
 
         ctx.restore();
     },
