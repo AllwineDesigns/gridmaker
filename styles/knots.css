@@ -113,3 +113,8 @@ div.hc:hover {
 .hidden {
     display: none;
 }
+
+#knot_diagram {
+    border: 1px solid #999999;
+    background-color: white;
+}
