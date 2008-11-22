@@ -40,10 +40,12 @@ KnotUI.prototype = {
         under_color: "white",
         miter_color: "white",
         orient: "vertical",
-        swap_bight_order: false
+        swap_bight_order: false,
+        show_colors: false
     },
     params: {
     },
+    show_colors: false,
     directions: {
         vertical: [ 'bottom', 'top' ],
         horizontal: [ 'left', 'right' ]
@@ -56,7 +58,7 @@ KnotUI.prototype = {
         var qry_params = {};
         if(window.location.href.indexOf("?") > -1) {
             var query_str = window.location.href.substring(window.location.href.indexOf("?")+1);
-            qry_params = parseQueryString(query_str, true);
+            qry_params = parseQueryString(query_str);
             for(key in qry_params) {
                 var num = parseFloat(qry_params[key]);
                 if(isNaN(num)) {
@@ -72,8 +74,19 @@ KnotUI.prototype = {
         }
         update(this.params, this.default_params, qry_params);
 
+        this.show_colors = this.params.show_colors;
+
         this.knot = new Knot(this.params.parts, this.params.bights, this.params.sobre, this.params.coding);
         this.update_title();
+
+        var hc_colors = [];
+        for(key in this.params) {
+            if(key.match(/hc\d+_color/) != null) {
+                var hc_num = parseInt(key.replace(/hc(\d+)_color/, "$1"));
+                hc_colors[hc_num-1] = this.params[key];
+            }
+        }
+
         this.diagram = new KnotDiagram({
             knot: this.knot,
             width: this.params.width,
@@ -83,7 +96,8 @@ KnotUI.prototype = {
             miter_color: this.params.miter_color,
             strand_width: this.params.strand_width,
             orient: this.params.orient,
-            swap_bight_order: this.params.swap_bight_order
+            swap_bight_order: this.params.swap_bight_order,
+            hc_colors: hc_colors
         });
         this.init_elements();
         this.connect_signals();
@@ -147,10 +161,42 @@ KnotUI.prototype = {
         this.elements.run_list = $("run_list");
         this.elements.run_list.innerHTML = hc.run_list_str();
 
+        this.elements.next = $("next");
+        this.elements.prev = $("prev");
+
+        this.elements.toggle_show_colors = $("toggle_show_colors");
+        this.elements.half_cycle_color_panel = $("half_cycle_color_panel");
+        if(this.show_colors) {
+            this.elements.toggle_show_colors.innerHTML = "hide";
+            removeElementClass(this.elements.half_cycle_color_panel, "hidden");
+        }
+        this.elements.half_cycle_colors = []
+
+        var components_per_line = 10;
+        for(var i = 0; i < this.knot.half_cycles.length; i++) {
+            var color_input = INPUT({size: 6 });
+
+            if(this.diagram.hc_colors[i]) {
+                color_input.value = this.diagram.hc_colors[i];
+            }
+            var color_component = DIV({ 'class': (i == this.knot.half_cycles.length-1 || (i+1)%components_per_line == 0) ? 'last_component' : 'component' },
+                                    DIV({}, SPAN({ 'class': "bold" }, "Half Cycle " + (i+1))),
+                                    DIV({}, color_input));
+            this.elements.half_cycle_color_panel.appendChild(color_component);
+            this.elements.half_cycle_colors[i] = color_input;
+
+            if((i+1)%components_per_line == 0) {
+                this.elements.half_cycle_color_panel.appendChild(DIV({'class': "clear"}));
+            }
+        }
+        this.elements.half_cycle_color_panel.appendChild(DIV({'class': "clear"}));
+
         this.elements.generate = $("generate");
     },
 
     update_params: function() {
+        this.params = {}
+        this.params.show_colors = this.show_colors;
         this.params.width = parseInt(this.elements.width.value);
         this.params.height = parseInt(this.elements.height.value);
         this.params.parts = parseInt(this.elements.parts.value);
@@ -163,6 +209,12 @@ KnotUI.prototype = {
         this.params.strand_width = parseInt(this.elements.strand_width.value);
         this.params.orient = getSelected(this.elements.orient);
         this.params.swap_bight_order = this.elements.swap_bight_order.checked;
+
+        for(var i = 0; i < this.elements.half_cycle_colors.length; i++) {
+            if(this.elements.half_cycle_colors[i].value) {
+                this.params["hc" + (i+1) + "_color"] = this.elements.half_cycle_colors[i].value;
+            }
+        }
 
         for(key in this.params) {
             if(this.params[key] == this.default_params[key]) {
@@ -178,6 +230,23 @@ KnotUI.prototype = {
 
     update_title: function() {
         document.title = "Turks Heads - " + this.knot.parts + "x" + this.knot.bights + " " + this.knot.coding_part;
+    },
+
+    update_half_cycle: function() {
+        var hc_num = parseInt(this.elements.half_cycle.value);
+        var dir = (hc_num+1)%2;
+        var hc = this.knot.half_cycles[hc_num-1];
+
+        this.elements.from_pin.innerHTML = this.directions[this.diagram.orient][dir] + " pin " + hc.from_pin;
+        this.elements.to_pin.innerHTML = this.directions[this.diagram.orient][1-dir] + " pin " + hc.to_pin;
+        this.elements.run_list.innerHTML = hc.run_list_str();
+
+        var ctx = this.elements.canvas.getContext("2d");
+        ctx.save();
+        this.diagram.clear(ctx);
+        this.diagram.set_transform(ctx);
+        this.diagram.draw_hc(ctx, hc_num-1, 1);
+        ctx.restore();
     },
 
     connect_signals: function() {
@@ -196,22 +265,35 @@ KnotUI.prototype = {
                          }
                      }, this))
          }, this));
+        forEach(this.elements.half_cycle_colors, bind(function(text) {
+                     connect(text, "onkeydown", bind(function(e) {
+                         if(e.key().code == 13) {
+                             this.update_url();
+                         }
+                     }, this))
+         }, this));
+        connect(this.elements.toggle_show_colors, "onclick", bind(function(e) {
+            this.show_colors = !this.show_colors;
+            if(this.show_colors) {
+                this.elements.toggle_show_colors.innerHTML = "hide";
+                removeElementClass(this.elements.half_cycle_color_panel, "hidden");
+            } else {
+                this.elements.toggle_show_colors.innerHTML = "show";
+                addElementClass(this.elements.half_cycle_color_panel, "hidden");
+            }
+        }, this));
+
+        connect(this.elements.next, "onclick", bind(function(e) {
+            this.elements.half_cycle.value = (parseInt(this.elements.half_cycle.value)%this.knot.half_cycles.length)+1;
+            this.update_half_cycle();
+        }, this));
+        connect(this.elements.prev, "onclick", bind(function(e) {
+            this.elements.half_cycle.value = (((parseInt(this.elements.half_cycle.value)-1)-1+this.knot.half_cycles.length)%this.knot.half_cycles.length)+1;
+            this.update_half_cycle();
+        }, this));
         connect(this.elements.half_cycle, "onkeydown", bind(function(e) {
             if(e.key().code == 13) {
-                var hc_num = parseInt(this.elements.half_cycle.value);
-                var dir = (hc_num+1)%2;
-                var hc = this.knot.half_cycles[hc_num-1];
-
-                this.elements.from_pin.innerHTML = this.directions[this.diagram.orient][dir] + " pin " + hc.from_pin;
-                this.elements.to_pin.innerHTML = this.directions[this.diagram.orient][1-dir] + " pin " + hc.to_pin;
-                this.elements.run_list.innerHTML = hc.run_list_str();
-
-                var ctx = this.elements.canvas.getContext("2d");
-                ctx.save();
-                this.diagram.clear(ctx);
-                this.diagram.set_transform(ctx);
-                this.diagram.draw_hc(ctx, hc_num-1, 1);
-                ctx.restore();
+                this.update_half_cycle();
             }
         }, this));
         connect(this.elements.generate, "onclick", bind(function() {
@@ -328,7 +410,8 @@ function KnotDiagram(opts) {
         under_color: opts.under_color,
         miter_color: opts.miter_color,
         orient: opts.orient,
-        swap_bight_order: opts.swap_bight_order
+        swap_bight_order: opts.swap_bight_order,
+        hc_colors: opts.hc_colors
     });
 }
 
@@ -442,7 +525,7 @@ KnotDiagram.prototype = {
                     if(this.swap_bight_order) {
                         ctx.translate(this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
                     } else {
-                        ctx.translate(this.absolute_width-this.bight_dist*(i+.5*(this.knot.parts%2)), 15);
+                        ctx.translate(this.absolute_width-this.bight_dist*(i+.5*(this.knot.parts%2))-15, 15);
                     }
                     ctx.mozDrawText("" + ((i%this.knot.bights)+1));
 
@@ -599,6 +682,10 @@ KnotPiece.prototype = {
         ctx.lineWidth = 1;
         ctx.fillStyle = this.diagram.miter_color;
 
+        if(this.diagram.hc_colors[this.hc]) {
+            ctx.fillStyle = this.diagram.hc_colors[this.hc];
+        }
+
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -649,6 +736,10 @@ KnotPiece.prototype = {
         ctx.lineWidth = 1;
         ctx.fillStyle = this.diagram.miter_color;
 
+        if(this.diagram.hc_colors[this.hc]) {
+            ctx.fillStyle = this.diagram.hc_colors[this.hc];
+        }
+
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -681,6 +772,9 @@ KnotPiece.prototype = {
             ctx.globalCompositeOperation = 'destination-over';
         }
         ctx.lineWidth = 1;
+        if(this.diagram.hc_colors[this.hc]) {
+            ctx.fillStyle = this.diagram.hc_colors[this.hc];
+        }
         
         ctx.translate(x, y);
         ctx.rotate(this.diagram.angle);
@@ -708,6 +802,9 @@ KnotPiece.prototype = {
             ctx.globalCompositeOperation = 'destination-over';
         }
         ctx.lineWidth = 1;
+        if(this.diagram.hc_colors[this.hc]) {
+            ctx.fillStyle = this.diagram.hc_colors[this.hc];
+        }
         
         ctx.translate(x, y);
         ctx.rotate(-this.diagram.angle);
@@ -735,6 +832,9 @@ KnotPiece.prototype = {
             ctx.globalCompositeOperation = 'destination-over';
         }
         ctx.lineWidth = 1;
+        if(this.diagram.hc_colors[this.hc]) {
+            ctx.fillStyle = this.diagram.hc_colors[this.hc];
+        }
         
         ctx.translate(x, y);
         ctx.rotate(Math.PI/2+this.diagram.angle);
@@ -762,6 +862,9 @@ KnotPiece.prototype = {
             ctx.globalCompositeOperation = 'destination-over';
         }
         ctx.lineWidth = 1;
+        if(this.diagram.hc_colors[this.hc]) {
+            ctx.fillStyle = this.diagram.hc_colors[this.hc];
+        }
         
         ctx.translate(x, y);
         ctx.rotate(Math.PI/2-this.diagram.angle);

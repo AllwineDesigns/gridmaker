@@ -9,8 +9,33 @@
 </head>
 <body>
 
-<div class="panel" style="height: 100%">
+<div id="top_panel">
 
+<div class="subpanel">
+    <div class="subpanel_title">Knot</div>
+    <div class="subpanel_content">
+        <div class="component">
+            <div>
+            <span class="bold">Parts x Bights</span>
+            </div>
+            <div>
+                <input type="text" id="parts" size=2/> x <input type="text" id="bights" size=2/> <br/>
+            </div>
+        </div>
+
+        <div class="last_component">
+            <div>
+            <span class="bold">Coding</span>
+            </div>
+            <div>
+                <input type="text" id="coding" size=10/>
+                <input type="checkbox" id="sobre"/> Sobre
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+</div>
 <div class="subpanel">
     <div class="subpanel_title">Diagram</div>
     <div class="subpanel_content">
@@ -19,22 +44,28 @@
             <div>
                 <input type="text" id="width" size=2/> x <input type="text" id="height" size=2/>
             </div>
-
-            <div style="margin-top: 10px"><span class="bold">Strand Width</span></div>
-            <div><input type="text" id="strand_width" size=2/></div>
-
-            <div style="margin-top: 10px"><span class="bold">Bights</span></div> 
-            <div><input type="checkbox" id="swap_bight_order"/> Swap order<br/></div>
-            <div style="margin-top: 5px"><select id="orient"><option value="vertical" selected="selected">Top/Bottom</option><option value="horizontal">Left/Right</option></select></div>
         </div>
-        <div class="last_component">
+        <div class="component">
+            <div><span class="bold">Strand Width</span></div>
+            <div><input type="text" id="strand_width" size=2/></div>
+        </div>
+
+        <div class="component">
+            <div><span class="bold">Bights</span></div> 
+            <div><select id="orient"><option value="vertical" selected="selected">Top/Bottom</option><option value="horizontal">Left/Right</option></select> <input type="checkbox" id="swap_bight_order"/> Swap order<br/></div>
+        </div>
+        <div class="component">
             <div><span class="bold">Over Color</span></div>
             <div><input type="text" id="over_color" size=6/></div>
+        </div>
 
-            <div style="margin-top: 10px"><span class="bold">Under Color</span></div>
+        <div class="component">
+            <div><span class="bold">Under Color</span></div>
             <div><input type="text" id="under_color" size=6/></div>
+        </div>
             
-            <div style="margin-top: 10px"><span class="bold">Bight Color</span></div> 
+        <div class="last_component">
+            <div><span class="bold">Bight Color</span></div> 
             <div><input type="text" id="miter_color" size=6/></div>
         </div>
         <div class="clear"></div>
@@ -42,46 +73,25 @@
 </div>
 <div class="clear"></div>
 <div class="subpanel">
-    <div class="subpanel_title">Knot</div>
-    <div class="subpanel_content">
-        <div class="last_component">
-            <div>
-            <span class="bold">Parts x Bights</span><br/> 
-            <div>
-                <input type="text" id="parts" size=2/> x <input type="text" id="bights" size=2/> <br/>
-            </div>
-            </div>
-
-            <div style="margin-top: 15px">
-            <span class="bold">Coding</span><br/>
-            <div>
-                <input type="checkbox" id="sobre"/> Sobre
-            </div>
-            <div style="margin-top: 5px">
-                <input type="text" id="coding" size=10/>
-            </div>
-            </div>
-        </div>
-        <div class="clear"></div>
+    <div class="subpanel_title"><span class="bold">Half Cycle Colors</span> <span id="toggle_show_colors">show</span></div>
+    <div class="subpanel_content hidden" id="half_cycle_color_panel">
     </div>
-
 </div>
-
 <div class="clear"></div>
 
-<div style="float: left; margin: 5px">
-<button id="generate">Generate</button><br/>
+<div class="subpanel">
+    <button id="generate">Generate</button>
 </div>
-
 <div class="clear"></div>
+
 </div>
 
-<div class="panel">
+<div id="diagram_panel">
     <div class="subpanel">
     <div>
         <div style="float: left; margin: 5px">
             <div class="bold">Half cycle</div>
-            <div class="small_component"><input type="text" id="half_cycle" size=2/></div>
+            <div class="small_component"><img src="images/prev.png" id="prev"/><input type="text" id="half_cycle" size=2/><img src="images/next.png" id="next"/></div>
         </div>
         <div style="float: left; margin: 5px">
             <div class="bold">From</div>
@@ -102,8 +112,9 @@
         <canvas id="knot_diagram" style="border: 1px solid #999999"></canvas>
     </div>
     </div>
-
+    <div class="clear"></div>
 </div>
+
 <div class="panel">
     <div class="subpanel">
         <div class="subpanel_content">

@@ -8,7 +8,6 @@ body, table tr th {
     border-bottom: 1px solid #999999;
     border-right: 1px solid #999999;
     float: left;
-    margin-left: 10px;
     margin-top: 10px;
 }
 
@@ -23,7 +22,7 @@ body, table tr th {
 
 .subpanel {
     float: left;
-    padding: 10px;
+    padding: 5px;
 }
 
 .subpanel_title {
@@ -33,21 +32,22 @@ body, table tr th {
 .subpanel_content {
     border: 1px solid #999999;
     background-color: white;
-    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .component {
     float: left;
     border-right: 1px solid #999999;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
 .last_component {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
     float: left;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -66,3 +66,50 @@ div.hc:hover {
     background-color: #ccc;
 }
 
+#next {
+    margin-left: 2px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+#prev {
+    margin-right: 2px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+#top_panel {
+    width: 100%;
+    margin: 0px;
+    background-color: #eeeeee;
+    border-bottom: 1px solid #999999;
+    border-right: 1px solid #999999;
+}
+
+#colors_panel {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    background-color: #eeeeee;
+    border-bottom: 1px solid #999999;
+    border-right: 1px solid #999999;
+    width: 200px;
+    margin-top: 10px;
+}
+#diagram_panel {
+    margin-top: 10px;
+    display: table;
+    background-color: #eeeeee;
+    border-bottom: 1px solid #999999;
+    border-right: 1px solid #999999;
+}
+
+#toggle_show_colors {
+    font-size: 10px;
+    font-weight: normal;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
