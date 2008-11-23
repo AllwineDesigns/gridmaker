@@ -77,13 +77,10 @@ KnotUI.prototype = {
         this.show_colors = this.params.show_colors;
 
         try {
-            log(this.params.parts);
-            log(this.params.bights);
             this.knot = new Knot(this.params.parts, this.params.bights, this.params.sobre, this.params.coding);
         } catch(err) {
             this.error = "parts and bights must have a gcd of 1";
         }
-        log(this.error);
 
         if(!this.error) {
             this.update_title();
@@ -210,6 +207,8 @@ KnotUI.prototype = {
 
         this.elements.generate = $("generate");
 
+        this.elements.clear_colors = $("clear_colors");
+
         this.elements.error = $("error");
         if(this.error) {
             this.elements.error.innerHTML = this.error;
@@ -223,7 +222,8 @@ KnotUI.prototype = {
         this.params.height = parseInt(this.elements.height.value);
         this.params.parts = parseInt(this.elements.parts.value);
         this.params.bights = parseInt(this.elements.bights.value);
-        this.params.coding = this.elements.coding.value;
+        this.params.coding = this.elements.coding.value.replace(/[^\\/]/g, "");
+
         this.params.sobre = this.elements.sobre.checked;
         this.params.over_color = this.elements.over_color.value;
         this.params.under_color = this.elements.under_color.value;
@@ -308,6 +308,12 @@ KnotUI.prototype = {
                 this.elements.toggle_show_colors.innerHTML = "show";
                 addElementClass(this.elements.half_cycle_color_panel, "hidden");
             }
+        }, this));
+
+        connect(this.elements.clear_colors, "onclick", bind(function(e) {
+            forEach(this.elements.half_cycle_colors, function(el) {
+                el.value = "";
+            });
         }, this));
 
         connect(this.elements.next, "onclick", bind(function(e) {

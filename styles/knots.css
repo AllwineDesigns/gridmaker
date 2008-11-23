@@ -110,6 +110,13 @@ div.hc:hover {
     cursor: pointer;
 }
 
+#clear_colors {
+    font-size: 10px;
+    font-weight: normal;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
 .hidden {
     display: none;
 }
