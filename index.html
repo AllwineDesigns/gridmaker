@@ -1,8 +1,8 @@
 <html>
 <head>
 <title>Turks Heads</title>
+<script type="text/javascript" src="js/jscolor.js"></script>
 <script type="text/javascript" src="js/knot.js"></script>
-
 <script type="text/javascript" src="js/MochiKit.js"></script>
 <script type="text/javascript" src="js/knot_ui.js"></script>
 <link href="styles/knots.css" type="text/css" rel="stylesheet"/>
@@ -40,14 +40,24 @@
     <div class="subpanel_title">Diagram</div>
     <div class="subpanel_content">
         <div class="component">
-            <div><span class="bold">Width x Height</span></div>
+            <div><span class="bold">Auto Size</span></div>
             <div>
-                <input type="text" id="width" size=2/> x <input type="text" id="height" size=2/>
+                <input type="checkbox" id="auto_calc_size"/>
             </div>
         </div>
         <div class="component">
             <div><span class="bold">Strand Width</span></div>
             <div><input type="text" id="strand_width" size=2/></div>
+        </div>
+        <div class="component">
+            <div><span class="bold">Strand Gap Size</span></div>
+            <div><input type="text" id="strand_gap_size" size=2/></div>
+        </div>
+        <div class="component">
+            <div><span class="bold">Width x Height</span></div>
+            <div>
+                <input type="text" id="width" size=4/> x <input type="text" id="height" size=4/>
+            </div>
         </div>
 
         <div class="component">
@@ -56,17 +66,17 @@
         </div>
         <div class="component">
             <div><span class="bold">Over Color</span></div>
-            <div><input type="text" id="over_color" size=6/></div>
+            <div><input type="text" id="over_color" class="color {required:false,hash:true,adjust:false}" size=6/></div>
         </div>
 
         <div class="component">
             <div><span class="bold">Under Color</span></div>
-            <div><input type="text" id="under_color" size=6/></div>
+            <div><input type="text" id="under_color" class="color {required:false,hash:true,adjust:false}" size=6/></div>
         </div>
             
         <div class="last_component">
             <div><span class="bold">Bight Color</span></div> 
-            <div><input type="text" id="miter_color" size=6/></div>
+            <div><input type="text" id="miter_color" class="color {required:false,hash:true,adjust:false}" size=6/></div>
         </div>
         <div class="clear"></div>
     </div>
@@ -128,6 +138,8 @@
 <div>
 
 <div class="clear"></div>
+
+<canvas id="test"></canvas>
 
 
 </body>
