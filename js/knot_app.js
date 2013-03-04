@@ -231,6 +231,20 @@ KnotApp.prototype = {
 
             knot_app.update();
         });
+        connect($("dogbonecoding"), "onclick", function(e) {
+            controller.saveUndo();
+            controller.grid.coding_func = controller.grid.dogBoneCoding;
+            controller.grid.coding_opts = {
+                rows: parseInt($("dog_bone_rows").value),
+                topcoding: $("dog_bone_top_coding").value,
+                midcoding: $("dog_bone_mid_coding").value,
+                botcoding: $("dog_bone_bot_coding").value,
+            };
+            controller.grid.updateCoding();
+            controller.canvas.render();
+
+            knot_app.update();
+        });
         connect($("tilecoding"), "onclick", function(e) {
             controller.saveUndo();
             controller.grid.coding_func = controller.grid.tileCoding;
@@ -298,6 +312,17 @@ KnotApp.prototype = {
             controller.saveUndo();
             controller.grid.grid_func = controller.grid.matGrid;
             controller.grid.grid_opts = 0;
+            controller.grid.updateGrid();
+            knot_app.update();
+        });
+        connect($("dog_bone_grid"), "onclick", function(e) {
+            controller.saveUndo();
+            controller.grid.grid_func = controller.grid.dogBoneGrid;
+            controller.grid.grid_opts = {
+                nested_bights: parseInt($("dog_bone_nested_bights").value),
+                shift_bottom_bights: parseInt($("dog_bone_shift_bottom_bights").value),
+                rows: parseInt($("dog_bone_rows").value)
+            };
             controller.grid.updateGrid();
             knot_app.update();
         });

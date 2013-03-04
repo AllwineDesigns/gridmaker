@@ -633,6 +633,24 @@ KnotGrid.prototype = {
         }
     },
 
+    dogBoneCoding: function(opts) {
+        for(var r = 0; r < opts.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.coding[r][c] = opts.topcoding[r%opts.topcoding.length];
+            }
+        }
+        for(var r = opts.rows; r < this.rows-opts.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.coding[r][c] = opts.midcoding[r%opts.midcoding.length];
+            }
+        }
+        for(var r = this.rows-opts.rows; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.coding[r][c] = opts.botcoding[r%opts.botcoding.length];
+            }
+        }
+    },
+
     toString: function() {
         var str = "";
         for(var r = 0; r < this.rows; r++) {
@@ -797,8 +815,62 @@ KnotGrid.prototype = {
         this.setInvalid();
     },
 
-/*
     dogBoneGrid: function(opts) {
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.grid[r][c] = KnotGridValues.EMPTY;
+            }
+        }
+
+        var num_nested = opts.nested_bights;
+        var shift_bottom = 2*opts.shift_bottom_bights;
+        for(var i = 0; i < num_nested; i++) {
+            for(var c = 0; c < this.cols; c += 2*num_nested) {
+                var r = 2*i;
+                this.grid[r][c] = KnotGridValues.UPPER_BIGHT;
+                this.grid[r][c+1] = KnotGridValues.UPPER_BIGHT;
+
+                r = opts.rows-2-(2*i);
+                if(i == num_nested-1) {
+                    this.grid[r][(c+shift_bottom)%this.cols] = KnotGridValues.X;
+                    if(c+1 < this.cols) {
+                        this.grid[r][(c+1+shift_bottom)%this.cols] = KnotGridValues.X;
+                    }
+                } else {
+                    this.grid[r][(c+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                    if(c+1 < this.cols) {
+                        this.grid[r][(c+1+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                    }
+                }
+            }
+
+        }
+
+        for(var i = 0; i < num_nested; i++) {
+            for(var c = 0; c < this.cols; c += 2*num_nested) {
+                var r = this.rows-1-opts.rows+2*i;
+
+                if(i == 0) {
+                    this.grid[r][c] = KnotGridValues.X;
+                    this.grid[r][c+1] = KnotGridValues.X;
+                } else {
+                    this.grid[r][c] = KnotGridValues.UPPER_BIGHT;
+                    this.grid[r][c+1] = KnotGridValues.UPPER_BIGHT;
+                }
+
+                r = this.rows-1-(2*i);
+                this.grid[r][(c+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                if(c+1 < this.cols) {
+                    this.grid[r][(c+1+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                }
+            }
+
+        }
+        this.extendStrands();
+        this.setInvalid();
+    },
+
+    pineappleGrid: function(opts) {
         for(var r = 0; r < this.rows; r++) {
             for(var c = 0; c < this.cols; c++) {
                 this.grid[r][c] = KnotGridValues.EMPTY;
@@ -824,7 +896,6 @@ KnotGrid.prototype = {
         this.extendStrands();
         this.setInvalid();
     },
-    */
 
     pineapplePlantHangerGrid: function(opts) {
         for(var r = 0; r < this.rows; r++) {
