@@ -336,6 +336,21 @@ KnotApp.prototype = {
             controller.grid.updateGrid();
             knot_app.update();
         });
+        connect($("do_letter_pins"), "onclick", function(e) {
+            controller.do_letter_pins = $("do_letter_pins").checked;
+            knot_app.do_letter_pins = $("do_letter_pins").checked;
+            knot_app.update();
+        });
+        connect($("bottom_pineapple_grid"), "onclick", function(e) {
+            controller.saveUndo();
+            controller.grid.grid_func = controller.grid.bottomPineappleGrid;
+            controller.grid.grid_opts = {
+                nested_bights: parseInt($("nested_bights").value),
+                shift_bottom_bights: parseInt($("shift_bottom_bights").value)
+            };
+            controller.grid.updateGrid();
+            knot_app.update();
+        });
         connect($("pineapple_plant_hanger_grid"), "onclick", function(e) {
             controller.saveUndo();
             controller.grid.grid_func = controller.grid.pineapplePlantHangerGrid;
@@ -407,7 +422,7 @@ KnotApp.prototype = {
         var instructions;
         var strand_lengths;
         if(this.do_every_other) {
-            instructions = new KnotInstructions(this.controller.grid, every_other);
+            instructions = new KnotInstructions(this.controller.grid, every_other, this.do_letter_pins);
             strand_lengths = this.controller.strandLengths(every_other);
         } else {
             instructions = new KnotInstructions(this.controller.grid, default_start_locs);

@@ -73,13 +73,15 @@ StrandInstructions.prototype = {
     }
 };
 
-function KnotInstructions(grid, start_locs) {
-    this.init(grid,start_locs);
+function KnotInstructions(grid, start_locs, do_letter_pins) {
+    this.init(grid,start_locs,do_letter_pins);
 }
 
 KnotInstructions.prototype = {
-    init: function(grid, start_locs) {
+    init: function(grid, start_locs,do_letter_pins) {
+        this.do_letter_pins = do_letter_pins;
         this.instructions = [];
+        this.grid = grid;
 
         var newgrid = grid.emptyCopy();
         for(var i = 0; i < start_locs.length; i++) {
@@ -150,7 +152,12 @@ KnotInstructions.prototype = {
         return map;
     },
     toString: function() {
-        var pinmap = this.getPinMap();
+        var pinmap;
+        if(this.do_letter_pins) {
+            pinmap = this.grid.getPinMap();
+        } else {
+            pinmap = this.getPinMap();
+        }
         var str_out = "";
         for(var i = 0; i < this.instructions.length; i++) {
             var strand = this.instructions[i];

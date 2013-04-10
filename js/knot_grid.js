@@ -11,7 +11,11 @@ PinMap.prototype = {
     },
 
     getPin: function(row,col) {
-        return this.mapping["p" + row + "," + col];
+        if(this.mapping["p" + row + "," + col]) {
+            return this.mapping["p" + row + "," + col];
+        }
+
+        return "";
     },
 
     hasPin: function(row,col) {
@@ -896,6 +900,34 @@ KnotGrid.prototype = {
         this.extendStrands();
         this.setInvalid();
     },
+    bottomPineappleGrid: function(opts) {
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.grid[r][c] = KnotGridValues.EMPTY;
+            }
+        }
+
+        var num_nested = opts.nested_bights;
+        var shift_bottom = 2*opts.shift_bottom_bights;
+        for(var c = 0; c < this.cols; c+= 2) {
+            var r = 0;
+            this.grid[r][c] = KnotGridValues.UPPER_BIGHT;
+            this.grid[r][c+1] = KnotGridValues.UPPER_BIGHT;
+        }
+
+        for(var i = 0; i < num_nested; i++) {
+            for(var c = 0; c < this.cols; c += 2*num_nested) {
+                r = this.rows-1-(2*i);
+                this.grid[r][(c+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                if(c+1 < this.cols) {
+                    this.grid[r][(c+1+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                }
+            }
+
+        }
+        this.extendStrands();
+        this.setInvalid();
+    },
 
     pineapplePlantHangerGrid: function(opts) {
         for(var r = 0; r < this.rows; r++) {
@@ -1117,15 +1149,43 @@ KnotGrid.prototype = {
         }
     },
 
-    // eventually this should return a map from row,col to a label
-    // of some sort like "A1", "B3", etc.
-    // for now just returns map from row,col to row,col
     getPinMap: function() {
         var map = new PinMap();
+        var pinNum = 1;
+        var pinLetter = 64; // ascii value
+        var m = {
+        /*
+            67: 68,
+            68: 69,
+            69: 71,
+            70: 72
+        */
+        };
         for(var r = 0; r < this.rows; r++) {
-            for(var c = 0; c < this.cols; c++) {
-                map.setPin(r + "," + c, r, c);
+            var hasBights = false;
+            for(var c = -1; c < (this.cols-1); c++) {
+                var col = (c+this.cols)%this.cols;
+                if(this.isBight(r,col)) {
+                    hasBights = true;
+                }
             }
+            if(hasBights) {
+                pinLetter++;
+                for(var c = -1; c < (this.cols-1); c++) {
+                    var col = (c+this.cols)%this.cols;
+                    if(this.isBight(r,col)) {
+                        var pin;
+                        if(m[pinLetter]) {
+                            pin = String.fromCharCode(m[pinLetter])+pinNum;
+                        } else {
+                            pin = String.fromCharCode(pinLetter)+pinNum;
+                        }
+                        pinNum++;
+                        map.setPin(pin, r,col);
+                    }
+                }
+            }
+            pinNum = 1;
         }
 
         return map;

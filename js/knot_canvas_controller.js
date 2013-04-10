@@ -91,6 +91,7 @@ KnotCanvasResizeMode = {
 
 KnotCanvasController.prototype = {
     init: function(canvas, grid) {
+        this.do_letter_pins = false;
         this.canvas = canvas;
         this.grid = grid;
 

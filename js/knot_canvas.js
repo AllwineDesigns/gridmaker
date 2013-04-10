@@ -180,7 +180,13 @@ KnotCanvas.prototype = {
         if(this.controller.show_pins) {
 //            var instructions = new KnotInstructions(grid, grid.getDefaultStartLocations());
             var instructions = this.controller.instructions;
-            var pinmap = instructions.getPinMap();
+            var pinmap;
+            if(this.controller.do_letter_pins) {
+                pinmap = grid.getPinMap();
+            } else {
+                pinmap = instructions.getPinMap();
+            }
+
             var start_locs = grid.getValidStartLocations();
             for(var row = start_row; row <= end_row; row++) {
                 for(var col = start_col; col <= end_col; col++) {
