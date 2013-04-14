@@ -1163,7 +1163,7 @@ KnotGrid.prototype = {
         };
         for(var r = 0; r < this.rows; r++) {
             var hasBights = false;
-            for(var c = -1; c < (this.cols-1); c++) {
+            for(var c = 0; c < this.cols; c++) {
                 var col = (c+this.cols)%this.cols;
                 if(this.isBight(r,col)) {
                     hasBights = true;
@@ -1171,7 +1171,7 @@ KnotGrid.prototype = {
             }
             if(hasBights) {
                 pinLetter++;
-                for(var c = -1; c < (this.cols-1); c++) {
+                for(var c = 0; c < this.cols; c++) {
                     var col = (c+this.cols)%this.cols;
                     if(this.isBight(r,col)) {
                         var pin;
