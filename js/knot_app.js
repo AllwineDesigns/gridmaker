@@ -163,6 +163,30 @@ KnotApp.prototype = {
         connect($("strand_gap_inches"), "onchange", function() {
             var strand_gap = parseFloat($("strand_gap_inches").value)*controller.DPI;
             controller.setGapSize(strand_gap);
+            width_inches = (canvas.element.width-2*controller.padding.x)/controller.DPI;
+            height_inches = (canvas.element.height-2*controller.padding.y)/controller.DPI;
+
+            width_inches_str = "" + width_inches.toFixed(4) + " inches";
+            height_inches_str = "" + height_inches.toFixed(4) + " inches";
+
+            width_cm_str = "" + (2.54*width_inches).toFixed(4) + " cm";
+            height_cm_str = "" + (2.54*height_inches).toFixed(4) + " cm";
+
+            if(grid.cols_wrap) {
+                width_inches_str += " (" + (width_inches/PI).toFixed(4) + " inch diameter)";
+                width_cm_str += " (" + (2.54*width_inches/PI).toFixed(4) + " cm diameter)";
+            }
+
+            if(grid.rows_wrap) {
+                height_inches_str += " (" + (height_inches/PI).toFixed(4) + " inch diameter)";
+                height_cm_str += " (" + (2.54*height_inches/PI).toFixed(4) + " cm diameter)";
+            }
+
+            $("width_inches").innerHTML = width_inches_str;
+            $("height_inches").innerHTML = height_inches_str;
+
+            $("width_cm").innerHTML = width_cm_str;
+            $("height_cm").innerHTML = height_cm_str;
             knot_app.update();
         });
         connect($("strand_gap_cm"), "onchange", function() {
