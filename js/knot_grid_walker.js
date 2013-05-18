@@ -406,6 +406,9 @@ KnotGridWalker.prototype = {
                         next_col == this.start_loc.col &&
                         next_dir == this.start_loc.dir) {
                         ret = false;
+                        this.cur_loc.row = this.start_loc.row;
+                        this.cur_loc.col = this.start_loc.col;
+                        this.cur_loc.dir = this.start_loc.dir;
                         this.looped = true;
                     } else {
                         this.cur_loc.row = next_row;

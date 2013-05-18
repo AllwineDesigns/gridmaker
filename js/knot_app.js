@@ -55,8 +55,10 @@ KnotApp.prototype = {
 
         var controller = new KnotCanvasController(canvas, grid);
         this.controller = controller;
-        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations());
+        this.controller.do_letter_pins = true;
+        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), true);
         this.do_every_other = false;
+        this.do_letter_pins = true;
 
         var brushes_select = $("brushes");
         for(var i = 0; i < KnotCanvasBrushes.length; i++) {
@@ -425,7 +427,7 @@ KnotApp.prototype = {
             instructions = new KnotInstructions(this.controller.grid, every_other, this.do_letter_pins);
             strand_lengths = this.controller.strandLengths(every_other);
         } else {
-            instructions = new KnotInstructions(this.controller.grid, default_start_locs);
+            instructions = new KnotInstructions(this.controller.grid, default_start_locs, this.do_letter_pins);
             strand_lengths = this.controller.strandLengths(default_start_locs);
         }
         this.controller.instructions = instructions;

@@ -169,11 +169,13 @@ KnotInstructions.prototype = {
                 var end_loc = hc.getEndLoc();
                 var run_list = hc.getRunList();
 
-                str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).lpad(" ", 7) + " ";
+                str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).rpad(" ", 7) + " ";
                 for(var k = 0; k < run_list.length; k++) {
                     str_out += run_list[k] + " ";
                 }
-                str_out += "to " + pinmap.getPin(end_loc.row, end_loc.col).lpad(" ", 7) + "\n";
+                str_out += ("to " + pinmap.getPin(end_loc.row, end_loc.col)).lpad(" ", 10) + "\n";
+//                console.log("Start - " + start_loc.row + ", " + start_loc.col + ": " + pinmap.getPin(start_loc.row, start_loc.col));
+//                console.log("End - " + end_loc.row + ", " + end_loc.col + ": " + pinmap.getPin(end_loc.row, end_loc.col));
             }
             str_out += "\n";
         }
