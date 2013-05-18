@@ -120,15 +120,15 @@ KnotCanvasController.prototype = {
 
         this.autofill = true;
 
-        this.DPI = 300;
+        this.DPI = 90;
        
 //        this.strand_width = 1/8*this.DPI;
 //        log(this.strand_width);
 //        this.strand_gap_size = 2;
 //        this.shadow_width = 1;
-        this.strand_width = 1/32*this.DPI;
+        this.strand_width = 1/8*this.DPI;
         this.strand_height = this.strand_width;
-        this.strand_gap_size = 7;
+        this.strand_gap_size = 1/8*this.DPI;
         this.shadow_width = 3;
 
         this.grid_spacing = {
@@ -488,6 +488,28 @@ KnotCanvasController.prototype = {
             width: width,
             height: height
         };
+    },
+
+    setRowsCols: function(rows,cols) {
+        var oldrows = this.grid.rows;
+        var oldcols = this.grid.cols;
+        rc = this.calcMaxRowsCols(width, height);
+        this.grid.resize(rows,cols);
+        if(this.autofill) {
+            this.grid.fill();
+            this.grid.updateKnotInfo();
+        }
+        signal(this, "grid_resized");
+
+        wh = this.calcWidthHeight(rows, cols);
+        width = wh.width;
+        height = wh.height;
+
+        this.strand_gap_size = this.grid_spacing.row*2/Math.sqrt(2)-this.strand_width;
+
+        this.canvas.resize(width, height);
+        signal(this, "canvas_resized");
+        this.canvas.render();
     },
 
     mouseMove: function(e) {

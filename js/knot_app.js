@@ -187,6 +187,19 @@ KnotApp.prototype = {
             knot_app.update();
         });
 
+        connect($("parts_input"), "onchange", function() {
+            var parts = parseInt($("parts_input").value);
+            var bights = parseInt($("bights_input").value);
+            controller.setRowsCols(parts+1, bights*2);
+            knot_app.update();
+        });
+        connect($("bights_input"), "onchange", function() {
+            var parts = parseInt($("parts_input").value);
+            var bights = parseInt($("bights_input").value);
+            controller.setRowsCols(parts+1, bights*2);
+            knot_app.update();
+        });
+
         connect(controller, "canvas_resized", function() {
             width_inches = (canvas.element.width-2*controller.padding.x)/controller.DPI;
             height_inches = (canvas.element.height-2*controller.padding.y)/controller.DPI;
