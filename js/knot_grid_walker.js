@@ -35,9 +35,11 @@ function flipDirection(dir, grid_value) {
         switch(grid_value) {
             case KnotGridValues.UPPER_BIGHT:
             case KnotGridValues.LOWER_BIGHT:
+            case KnotGridValues.VERTICAL_BIGHTS:
                 return flipHorizontalDirection(dir);
             case KnotGridValues.LEFT_BIGHT:
             case KnotGridValues.RIGHT_BIGHT:
+            case KnotGridValues.HORIZONTAL_BIGHTS:
                 return flipVerticalDirection(dir);
         }
     }
@@ -62,6 +64,8 @@ ValidKnotDirections[KnotGridValues.UPPER_BIGHT] = [ KnotDirection.DOWN_RIGHT, Kn
 ValidKnotDirections[KnotGridValues.LOWER_BIGHT] = [ KnotDirection.UP_RIGHT, KnotDirection.UP_LEFT ];
 ValidKnotDirections[KnotGridValues.LEFT_BIGHT] = [ KnotDirection.UP_RIGHT, KnotDirection.DOWN_RIGHT ];
 ValidKnotDirections[KnotGridValues.RIGHT_BIGHT] = [ KnotDirection.DOWN_LEFT, KnotDirection.UP_LEFT ];
+ValidKnotDirections[KnotGridValues.VERTICAL_BIGHTS] = [ KnotDirection.DOWN_RIGHT, KnotDirection.UP_LEFT, KnotDirection.DOWN_LEFT, KnotDirection.UP_RIGHT ];
+ValidKnotDirections[KnotGridValues.HORIZONTAL_BIGHTS] = [ KnotDirection.DOWN_RIGHT, KnotDirection.UP_LEFT, KnotDirection.DOWN_LEFT, KnotDirection.UP_RIGHT ];
 
 function getValidKnotDirections(knot_value) {
     switch(knot_value) {
@@ -72,6 +76,8 @@ function getValidKnotDirections(knot_value) {
         case KnotGridValues.LOWER_BIGHT:
         case KnotGridValues.LEFT_BIGHT:
         case KnotGridValues.RIGHT_BIGHT:
+        case KnotGridValues.VERTICAL_BIGHTS:
+        case KnotGridValues.HORIZONTAL_BIGHTS:
             return ValidKnotDirections[knot_value];
         default:
             return 0;
@@ -94,6 +100,10 @@ function getDefaultKnotDirection(knot_value) {
             return KnotDirection.UP_RIGHT;
         case KnotGridValues.RIGHT_BIGHT:
             return KnotDirection.DOWN_LEFT;
+        case KnotGridValues.VERTICAL_BIGHTS:
+            return KnotDirection.DOWN_RIGHT;
+        case KnotGridValues.HORIZONTAL_BIGHTS:
+            return KnotDirection.DOWN_RIGHT;
         default:
             return 0;
     }
@@ -149,22 +159,30 @@ function isValidDirection(value, dir) {
             return (value == KnotGridValues.SLASH ||
                     value == KnotGridValues.LOWER_BIGHT ||
                     value == KnotGridValues.X ||
-                    value == KnotGridValues.LEFT_BIGHT)
+                    value == KnotGridValues.LEFT_BIGHT ||
+                    value == KnotGridValues.HORIZONTAL_BIGHTS ||
+                    value == KnotGridValues.VERTICAL_BIGHTS)
         case KnotDirection.UP_LEFT:
             return (value == KnotGridValues.BACKSLASH ||
                     value == KnotGridValues.LOWER_BIGHT ||
                     value == KnotGridValues.X ||
-                    value == KnotGridValues.RIGHT_BIGHT)
+                    value == KnotGridValues.RIGHT_BIGHT ||
+                    value == KnotGridValues.VERTICAL_BIGHTS ||
+                    value == KnotGridValues.HORIZONTAL_BIGHTS)
         case KnotDirection.DOWN_RIGHT:
             return (value == KnotGridValues.BACKSLASH ||
                     value == KnotGridValues.UPPER_BIGHT ||
                     value == KnotGridValues.X ||
-                    value == KnotGridValues.LEFT_BIGHT)
+                    value == KnotGridValues.LEFT_BIGHT ||
+                    value == KnotGridValues.VERTICAL_BIGHTS ||
+                    value == KnotGridValues.HORIZONTAL_BIGHTS)
         case KnotDirection.DOWN_LEFT:
             return (value == KnotGridValues.SLASH ||
                     value == KnotGridValues.UPPER_BIGHT ||
                     value == KnotGridValues.X ||
-                    value == KnotGridValues.RIGHT_BIGHT)
+                    value == KnotGridValues.RIGHT_BIGHT ||
+                    value == KnotGridValues.VERTICAL_BIGHTS ||
+                    value == KnotGridValues.HORIZONTAL_BIGHTS)
     }
 }
 
@@ -174,6 +192,8 @@ function canGoUpRight(value) {
         case KnotGridValues.SLASH:
         case KnotGridValues.LOWER_BIGHT:
         case KnotGridValues.LEFT_BIGHT:
+        case KnotGridValues.HORIZONTAL_BIGHTS:
+        case KnotGridValues.VERTICAL_BIGHTS:
             return true;
     }
     return false;
@@ -184,6 +204,8 @@ function canGoDownRight(value) {
         case KnotGridValues.BACKSLASH:
         case KnotGridValues.UPPER_BIGHT:
         case KnotGridValues.LEFT_BIGHT:
+        case KnotGridValues.HORIZONTAL_BIGHTS:
+        case KnotGridValues.VERTICAL_BIGHTS:
             return true;
     }
     return false;
@@ -194,6 +216,8 @@ function canGoDownLeft(value) {
         case KnotGridValues.SLASH:
         case KnotGridValues.UPPER_BIGHT:
         case KnotGridValues.RIGHT_BIGHT:
+        case KnotGridValues.HORIZONTAL_BIGHTS:
+        case KnotGridValues.VERTICAL_BIGHTS:
             return true;
     }
     return false;
@@ -204,6 +228,8 @@ function canGoUpLeft(value) {
         case KnotGridValues.BACKSLASH:
         case KnotGridValues.LOWER_BIGHT:
         case KnotGridValues.RIGHT_BIGHT:
+        case KnotGridValues.HORIZONTAL_BIGHTS:
+        case KnotGridValues.VERTICAL_BIGHTS:
             return true;
     }
     return false;
@@ -314,6 +340,12 @@ KnotGridWalker.prototype = {
                             case KnotGridValues.RIGHT_BIGHT:
                                 next_dir = KnotDirection.UP_LEFT;
                                 break;
+                            case KnotGridValues.HORIZONTAL_BIGHTS:
+                                next_dir = KnotDirection.UP_LEFT;
+                                break;
+                            case KnotGridValues.VERTICAL_BIGHTS:
+                                next_dir = KnotDirection.DOWN_RIGHT;
+                                break;
                         }
                         break;
                     case KnotDirection.UP_LEFT:
@@ -341,6 +373,12 @@ KnotGridWalker.prototype = {
                                 break;
                             case KnotGridValues.RIGHT_BIGHT:
                                 ret = false;
+                                break;
+                            case KnotGridValues.VERTICAL_BIGHTS:
+                                next_dir = KnotDirection.DOWN_LEFT;
+                                break;
+                            case KnotGridValues.HORIZONTAL_BIGHTS:
+                                next_dir = KnotDirection.UP_RIGHT;
                                 break;
                         }
                         break;
@@ -370,6 +408,12 @@ KnotGridWalker.prototype = {
                             case KnotGridValues.RIGHT_BIGHT:
                                 next_dir = KnotDirection.DOWN_LEFT;
                                 break;
+                            case KnotGridValues.VERTICAL_BIGHTS:
+                                next_dir = KnotDirection.UP_RIGHT;
+                                break;
+                            case KnotGridValues.HORIZONTAL_BIGHTS:
+                                next_dir = KnotDirection.DOWN_LEFT;
+                                break;
                         }
                         break;
                     case KnotDirection.DOWN_LEFT:
@@ -397,6 +441,12 @@ KnotGridWalker.prototype = {
                                 break;
                             case KnotGridValues.RIGHT_BIGHT:
                                 ret = false;
+                                break;
+                            case KnotGridValues.VERTICAL_BIGHTS:
+                                next_dir = KnotDirection.UP_LEFT;
+                                break;
+                            case KnotGridValues.HORIZONTAL_BIGHTS:
+                                next_dir = KnotDirection.DOWN_RIGHT;
                                 break;
                         }
                         break;

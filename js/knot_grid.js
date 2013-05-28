@@ -68,6 +68,8 @@ KnotGrid.fromString = function(str) {
                 case KnotGridValues.LOWER_BIGHT:
                 case KnotGridValues.LEFT_BIGHT:
                 case KnotGridValues.RIGHT_BIGHT:
+                case KnotGridValues.VERTICAL_BIGHTS:
+                case KnotGridValues.HORIZONTAL_BIGHTS:
                     break;
                 default:
                     grid_data[r][c] = KnotGridValues.EMPTY;
@@ -99,7 +101,9 @@ KnotGridValues = {
     UPPER_BIGHT: '^',
     LOWER_BIGHT: 'v',
     LEFT_BIGHT: '<',
-    RIGHT_BIGHT: '>'
+    RIGHT_BIGHT: '>',
+    HORIZONTAL_BIGHTS: 'K',
+    VERTICAL_BIGHTS: 'Y'
 };
 
 // O means a strand going DOWN_RIGHT (or UP_LEFT) is over the
@@ -411,6 +415,8 @@ KnotGrid.prototype = {
             case KnotGridValues.LOWER_BIGHT:
             case KnotGridValues.LEFT_BIGHT:
             case KnotGridValues.RIGHT_BIGHT:
+            case KnotGridValues.HORIZONTAL_BIGHTS:
+            case KnotGridValues.VERTICAL_BIGHTS:
                 return true;
         }
 

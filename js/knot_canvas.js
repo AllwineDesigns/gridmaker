@@ -174,6 +174,12 @@ KnotCanvas.prototype = {
                     this.drawRightBight(ctx, row,col,colors);
                 } else if(grid.grid[r][c] == KnotGridValues.LEFT_BIGHT) {
                     this.drawLeftBight(ctx, row,col,colors);
+                } else if(grid.grid[r][c] == KnotGridValues.HORIZONTAL_BIGHTS) {
+                    this.drawLeftBight(ctx, row,col,colors);
+                    this.drawRightBight(ctx, row,col,colors);
+                } else if(grid.grid[r][c] == KnotGridValues.VERTICAL_BIGHTS) {
+                    this.drawUpperBight(ctx, row,col,colors);
+                    this.drawLowerBight(ctx, row,col,colors);
                 }
             }
         }
@@ -251,6 +257,18 @@ KnotCanvas.prototype = {
                         shadow: 'yellow'
                     });
                     break;
+                case KnotCanvasClickMode.SET_VERTICAL_BIGHTS:
+                    this.drawUpperBight(ctx, cursor_row, cursor_col, {
+                        outline: 'white',
+                        over: 'yellow',
+                        shadow: 'yellow'
+                    });
+                    this.drawLowerBight(ctx, cursor_row, cursor_col, {
+                        outline: 'white',
+                        over: 'yellow',
+                        shadow: 'yellow'
+                    });
+                    break;
                 case KnotCanvasClickMode.SET_LEFT_BIGHT:
                     this.drawLeftBight(ctx, cursor_row, cursor_col, {
                         outline: 'white',
@@ -260,6 +278,18 @@ KnotCanvas.prototype = {
                     break;
                 case KnotCanvasClickMode.SET_RIGHT_BIGHT:
                     this.drawRightBight(ctx, cursor_row, cursor_col, {
+                        outline: 'white',
+                        over: 'yellow',
+                        shadow: 'yellow'
+                    });
+                    break;
+                case KnotCanvasClickMode.SET_HORIZONTAL_BIGHTS:
+                    this.drawRightBight(ctx, cursor_row, cursor_col, {
+                        outline: 'white',
+                        over: 'yellow',
+                        shadow: 'yellow'
+                    });
+                    this.drawLeftBight(ctx, cursor_row, cursor_col, {
                         outline: 'white',
                         over: 'yellow',
                         shadow: 'yellow'
@@ -878,6 +908,7 @@ KnotCanvas.prototype = {
 
     drawLeftBight: function(ctx, r, c, colors) {
         var P = this.grid2coords(r,c);
+
         var Mx = P.x+this.vars.halfcol;
         var My = P.y-this.vars.halfrow;
 

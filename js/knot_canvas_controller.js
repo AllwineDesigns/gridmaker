@@ -11,6 +11,8 @@ KnotCanvasClickMode = {
     SET_LOWER_BIGHT: "set_lower_bight",
     SET_LEFT_BIGHT: "set_left_bight",
     SET_RIGHT_BIGHT: "set_right_bight",
+    SET_HORIZONTAL_BIGHTS: "set_horizontal_bights",
+    SET_VERTICAL_BIGHTS: "set_vertical_bights",
     SET_SLASH: "set_slash",
     SET_BACKSLASH: "set_backslash",
     SET_X: "set_x",
@@ -19,6 +21,12 @@ KnotCanvasClickMode = {
 };
 
 KnotCanvasBrushes = [
+    {
+        brush:  "X*v*\n" +
+                "*>*<\n" +
+                "X*^*\n",
+        label: "hole"
+    },
     {
         brush:  "^*.*^*.*^*.*^*.*\n" +
                 "*\\*/*\\*/*\\*/*\\*/\n" +
@@ -392,6 +400,12 @@ KnotCanvasController.prototype = {
                         break;
                     case KnotCanvasClickMode.SET_RIGHT_BIGHT:
                         this.grid.grid[row][col] = KnotGridValues.RIGHT_BIGHT;
+                        break;
+                    case KnotCanvasClickMode.SET_HORIZONTAL_BIGHTS:
+                        this.grid.grid[row][col] = KnotGridValues.HORIZONTAL_BIGHTS;
+                        break;
+                    case KnotCanvasClickMode.SET_VERTICAL_BIGHTS:
+                        this.grid.grid[row][col] = KnotGridValues.VERTICAL_BIGHTS;
                         break;
                     case KnotCanvasClickMode.SET_SLASH:
                         this.grid.grid[row][col] = KnotGridValues.SLASH;

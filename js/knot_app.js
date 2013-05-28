@@ -141,6 +141,12 @@ KnotApp.prototype = {
         connect($("set_right_bight"), "onclick", function() {
             controller.setClickMode(KnotCanvasClickMode.SET_RIGHT_BIGHT);
         });
+        connect($("set_horizontal_bights"), "onclick", function() {
+            controller.setClickMode(KnotCanvasClickMode.SET_HORIZONTAL_BIGHTS);
+        });
+        connect($("set_vertical_bights"), "onclick", function() {
+            controller.setClickMode(KnotCanvasClickMode.SET_VERTICAL_BIGHTS);
+        });
         connect($("set_slash"), "onclick", function() {
             controller.setClickMode(KnotCanvasClickMode.SET_SLASH);
         });
