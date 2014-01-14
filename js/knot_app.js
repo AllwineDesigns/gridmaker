@@ -56,8 +56,9 @@ KnotApp.prototype = {
         var controller = new KnotCanvasController(canvas, grid);
         this.controller = controller;
         this.controller.do_letter_pins = true;
-        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), true);
+        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), true, false);
         this.do_every_other = false;
+        this.do_half_way = false;
         this.do_letter_pins = true;
 
         var brushes_select = $("brushes");
@@ -74,6 +75,11 @@ KnotApp.prototype = {
 
         connect($("do_every_other"), "onclick", bind(function() {
             this.do_every_other = $("do_every_other").checked;
+            knot_app.update();
+        }, this));
+
+        connect($("do_half_way"), "onclick", bind(function() {
+            this.do_half_way = $("do_half_way").checked;
             knot_app.update();
         }, this));
 
@@ -467,10 +473,10 @@ KnotApp.prototype = {
         var instructions;
         var strand_lengths;
         if(this.do_every_other) {
-            instructions = new KnotInstructions(this.controller.grid, every_other, this.do_letter_pins);
+            instructions = new KnotInstructions(this.controller.grid, every_other, this.do_letter_pins, this.do_half_way);
             strand_lengths = this.controller.strandLengths(every_other);
         } else {
-            instructions = new KnotInstructions(this.controller.grid, default_start_locs, this.do_letter_pins);
+            instructions = new KnotInstructions(this.controller.grid, default_start_locs, this.do_letter_pins, this.do_half_way);
             strand_lengths = this.controller.strandLengths(default_start_locs);
         }
         this.controller.instructions = instructions;

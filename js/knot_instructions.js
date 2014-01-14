@@ -73,12 +73,12 @@ StrandInstructions.prototype = {
     }
 };
 
-function KnotInstructions(grid, start_locs, do_letter_pins) {
-    this.init(grid,start_locs,do_letter_pins);
+function KnotInstructions(grid, start_locs, do_letter_pins, do_half_way) {
+    this.init(grid,start_locs,do_letter_pins, do_half_way);
 }
 
 KnotInstructions.prototype = {
-    init: function(grid, start_locs,do_letter_pins) {
+    init: function(grid, start_locs,do_letter_pins,do_half_way) {
         this.do_letter_pins = do_letter_pins;
         this.instructions = [];
         this.grid = grid;
@@ -127,6 +127,106 @@ KnotInstructions.prototype = {
             strand_instructions.appendHalfCycle(hc);
             this.instructions.push(strand_instructions);
         }
+
+        if(do_half_way) {
+            newgrid = grid.emptyCopy();
+            var normalInstructions = this.instructions;
+            this.instructions = [];
+            for(var i = 0; i < start_locs.length; i++) {
+                if(!this.grid.isLoop(start_locs[i])) {
+                    // only do half way instructions for strands that loop
+                    // back to the beginning
+                    // TODO add half way instructions for strands that don't loop?
+                    this.instructions.push(normalInstructions[i]);
+                    continue;
+                }
+                var numHalfCycles = normalInstructions[i].getHalfCycles().length;
+                var halfWayCycles = Math.ceil(numHalfCycles/2);
+                var otherWayCycles = numHalfCycles-halfWayCycles;
+
+                var strand_instructions = new StrandInstructions();
+
+                var start_loc = start_locs[i];
+                var walker = new KnotGridWalker(grid, start_loc);
+                var hc = new HalfCycle();
+                hc.setStartLoc(start_loc);
+                walker.next();
+
+                if(walker.isOnBight()) {
+                    var loc = walker.getLocation();
+                    newgrid.putStrandPiece(loc, grid.grid[loc.row][loc.col]);
+                } else {
+                    newgrid.putStrandPiece(walker.getLocation());
+                }
+
+                while(walker.next()) {
+                    var loc = walker.getLocation();
+                    if(walker.isOnBight()) {
+                        newgrid.putStrandPiece(loc, grid.grid[loc.row][loc.col]);
+                    } else {
+                        newgrid.putStrandPiece(loc);
+                    }
+                    if(newgrid.isBight(loc.row,loc.col)) {
+                        hc.setEndLoc(loc);
+                        strand_instructions.appendHalfCycle(hc);
+                        if(strand_instructions.getHalfCycles().length == halfWayCycles) {
+                            break;
+                        }
+                        hc = new HalfCycle();
+                        hc.setStartLoc(walker.getLocation());
+                    } else if(newgrid.isCrossing(loc.row, loc.col)) {
+                        if(newgrid.isOver(loc)) {
+                            hc.appendToRunList("O");
+                        } else {
+                            hc.appendToRunList("U");
+                        }
+                    } else {
+                        hc.appendToRunList(".");
+                    }
+                }
+
+                start_loc.dir = flipDirection(start_loc.dir, grid.grid[start_loc.row][start_loc.col]);
+                walker = new KnotGridWalker(grid, start_loc);
+                hc = new HalfCycle();
+                hc.setStartLoc(start_loc);
+                walker.next();
+
+                if(walker.isOnBight()) {
+                    var loc = walker.getLocation();
+                    newgrid.putStrandPiece(loc, grid.grid[loc.row][loc.col]);
+                } else {
+                    newgrid.putStrandPiece(walker.getLocation());
+                }
+
+                while(walker.next()) {
+                    var loc = walker.getLocation();
+                    if(walker.isOnBight()) {
+                        newgrid.putStrandPiece(loc, grid.grid[loc.row][loc.col]);
+                    } else {
+                        newgrid.putStrandPiece(loc);
+                    }
+                    if(newgrid.isBight(loc.row,loc.col)) {
+                        hc.setEndLoc(loc);
+                        strand_instructions.appendHalfCycle(hc);
+                        if(strand_instructions.getHalfCycles().length == numHalfCycles) {
+                            break;
+                        }
+                        hc = new HalfCycle();
+                        hc.setStartLoc(walker.getLocation());
+                    } else if(newgrid.isCrossing(loc.row, loc.col)) {
+                        if(newgrid.isOver(loc)) {
+                            hc.appendToRunList("O");
+                        } else {
+                            hc.appendToRunList("U");
+                        }
+                    } else {
+                        hc.appendToRunList(".");
+                    }
+                }
+
+                this.instructions.push(strand_instructions);
+            }
+        }
     },
     getPinMap: function() {
         var map = new PinMap();
@@ -168,6 +268,13 @@ KnotInstructions.prototype = {
                 var start_loc = hc.getStartLoc();
                 var end_loc = hc.getEndLoc();
                 var run_list = hc.getRunList();
+
+                if(j > 0) {
+                    var prevEndLoc = half_cycles[j-1].getEndLoc();
+                    if(start_loc.row != prevEndLoc.row || start_loc.col != prevEndLoc.col) {
+                        str_out += "\nReturn to start point and go other direction\n\n";
+                    }
+                }
 
                 str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).rpad(" ", 7) + " ";
                 for(var k = 0; k < run_list.length; k++) {
