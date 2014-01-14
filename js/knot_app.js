@@ -280,7 +280,7 @@ KnotApp.prototype = {
             controller.saveUndo();
             controller.grid.coding_func = controller.grid.dogBoneCoding;
             controller.grid.coding_opts = {
-                rows: parseInt($("dog_bone_rows").value),
+                rows: parseInt($("dog_bone_coding_rows").value),
                 topcoding: $("dog_bone_top_coding").value,
                 midcoding: $("dog_bone_mid_coding").value,
                 botcoding: $("dog_bone_bot_coding").value,
@@ -484,7 +484,7 @@ KnotApp.prototype = {
         }
         $("lengths").innerHTML = length_str;
         $("instructions").innerHTML = instructions.toString();
-        $("knot_string").innerHTML = this.controller.grid.toString();
+        $("knot_string").value = this.controller.grid.toString();
         $("strands").innerHTML = this.controller.grid.getNumStrands();
         $("facets").innerHTML = this.controller.grid.getFacets();
         $("strand_width_inches").value = (this.controller.strand_width/this.controller.DPI).toFixed(4);

@@ -651,12 +651,12 @@ KnotGrid.prototype = {
         }
         for(var r = opts.rows; r < this.rows-opts.rows; r++) {
             for(var c = 0; c < this.cols; c++) {
-                this.coding[r][c] = opts.midcoding[r%opts.midcoding.length];
+                this.coding[r][c] = opts.midcoding[(r-opts.rows)%opts.midcoding.length];
             }
         }
         for(var r = this.rows-opts.rows; r < this.rows; r++) {
             for(var c = 0; c < this.cols; c++) {
-                this.coding[r][c] = opts.botcoding[r%opts.botcoding.length];
+                this.coding[r][c] = opts.botcoding[(r-this.rows+opts.rows)%opts.botcoding.length];
             }
         }
     },
@@ -906,6 +906,7 @@ KnotGrid.prototype = {
         this.extendStrands();
         this.setInvalid();
     },
+
     bottomPineappleGrid: function(opts) {
         for(var r = 0; r < this.rows; r++) {
             for(var c = 0; c < this.cols; c++) {
@@ -992,6 +993,12 @@ KnotGrid.prototype = {
                             break;
                         case KnotGridValues.RIGHT_BIGHT:
                             break;
+                        case KnotGridValues.VERTICAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.UPPER_BIGHT;
+                            break;
+                        case KnotGridValues.HORIZONTAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.RIGHT_BIGHT;
+                            break;
                     }
                     break;
                 case KnotDirection.UP_LEFT:
@@ -1013,6 +1020,12 @@ KnotGrid.prototype = {
                             break;
                         case KnotGridValues.RIGHT_BIGHT:
                             this.grid[last_loc.row][last_loc.col] = KnotGridValues.EMPTY;
+                            break;
+                        case KnotGridValues.VERTICAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.UPPER_BIGHT;
+                            break;
+                        case KnotGridValues.HORIZONTAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.LEFT_BIGHT;
                             break;
                     }
                     break;
@@ -1036,6 +1049,12 @@ KnotGrid.prototype = {
                             break;
                         case KnotGridValues.RIGHT_BIGHT:
                             break;
+                        case KnotGridValues.VERTICAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.LOWER_BIGHT;
+                            break;
+                        case KnotGridValues.HORIZONTAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.RIGHT_BIGHT;
+                            break;
                     }
                     break;
                 case KnotDirection.DOWN_LEFT:
@@ -1057,6 +1076,12 @@ KnotGrid.prototype = {
                             break;
                         case KnotGridValues.RIGHT_BIGHT:
                             this.grid[last_loc.row][last_loc.col] = KnotGridValues.EMPTY;
+                            break;
+                        case KnotGridValues.VERTICAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.LOWER_BIGHT;
+                            break;
+                        case KnotGridValues.HORIZONTAL_BIGHTS:
+                            this.grid[last_loc.row][last_loc.col] = KnotGridValues.LEFT_BIGHT;
                             break;
                     }
                     break;
@@ -1084,6 +1109,12 @@ KnotGrid.prototype = {
                         break;
                     case KnotGridValues.RIGHT_BIGHT:
                         break;
+                    case KnotGridValues.VERTICAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.UPPER_BIGHT;
+                        break;
+                    case KnotGridValues.HORIZONTAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.RIGHT_BIGHT;
+                        break;
                 }
                 break;
             case KnotDirection.UP_LEFT:
@@ -1105,6 +1136,12 @@ KnotGrid.prototype = {
                         break;
                     case KnotGridValues.RIGHT_BIGHT:
                         this.grid[cur_loc.row][cur_loc.col] = KnotGridValues.EMPTY;
+                        break;
+                    case KnotGridValues.VERTICAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.UPPER_BIGHT;
+                        break;
+                    case KnotGridValues.HORIZONTAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.LEFT_BIGHT;
                         break;
                 }
                 break;
@@ -1128,6 +1165,12 @@ KnotGrid.prototype = {
                         break;
                     case KnotGridValues.RIGHT_BIGHT:
                         break;
+                    case KnotGridValues.VERTICAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.LOWER_BIGHT;
+                        break;
+                    case KnotGridValues.HORIZONTAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.RIGHT_BIGHT;
+                        break;
                 }
                 break;
             case KnotDirection.DOWN_LEFT:
@@ -1149,6 +1192,12 @@ KnotGrid.prototype = {
                         break;
                     case KnotGridValues.RIGHT_BIGHT:
                         this.grid[cur_loc.row][cur_loc.col] = KnotGridValues.EMPTY;
+                        break;
+                    case KnotGridValues.VERTICAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.LOWER_BIGHT;
+                        break;
+                    case KnotGridValues.HORIZONTAL_BIGHTS:
+                        this.grid[last_loc.row][last_loc.col] = KnotGridValues.LEFT_BIGHT;
                         break;
                 }
                 break;

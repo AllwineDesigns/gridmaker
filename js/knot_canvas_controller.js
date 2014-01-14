@@ -21,6 +21,452 @@ KnotCanvasClickMode = {
 };
 
 KnotCanvasBrushes = [
+    {brush:
+".*.*^*.*.*.*\n" +
+"*.*/*\\*.*.*.\n" +
+".*/*^*\\*.*.*\n" +
+"*<*<*>*>*.*.\n" +
+".*\\*X*/*^*.*\n" +
+"*\\*X*X*/*\\*.\n" +
+".*X*X*X*^*\\*\n" +
+"*X*X*X*X*>*>\n" +
+".*X*X*X*v*/*\n" +
+"*/*X*X*\\*/*.\n" +
+".*/*X*\\*v*.*\n" +
+"*<*<*>*>*.*.\n" +
+".*\\*v*/*.*.*\n" +
+"*.*\\*/*.*.*.\n" +
+".*.*v*.*.*.*\n",
+label: "celtic"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "A"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "B"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "C"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "D"
+    },
+    {
+        brush:  "X*Y*Y\n" +
+                "*X*X*\n" +
+                "K*X*X\n" +
+                "*X*X*\n" +
+                "K*Y*Y\n" +
+                "*X*X*\n" +
+                "K*X*X\n" +
+                "*X*X*\n" +
+                "X*Y*Y\n",
+        label: "E"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "F"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "G"
+    },
+    {
+        brush:  "X*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "H"
+    },
+    {
+        brush:  "X\n" +
+                "*\n" +
+                "K\n" +
+                "*\n" +
+                "K\n" +
+                "*\n" +
+                "K\n" +
+                "*\n" +
+                "X\n",
+        label: "I"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "X*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "J"
+    },
+    {
+        brush:  "X*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "K"
+    },
+    {
+        brush:  "X*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "L"
+    },
+    {
+        brush:  "X*Y*X*Y*X\n" +
+                "*X*X*X*X*\n" +
+                "K*X*K*X*K\n" +
+                "*X*X*X*X*\n" +
+                "K*X*X*X*K\n" +
+                "*X*X*X*X*\n" +
+                "K*X*X*X*K\n" +
+                "*X*X*X*X*\n" +
+                "X*X*X*X*X\n",
+        label: "M"
+    },
+    {
+        brush:  "X*Y*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*K*K\n" +
+                "*X*X*X*\n" +
+                "K*X*Y*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "N"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "O"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "P"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*Y\n",
+        label: "Q"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "R"
+    },
+    {
+        brush:  "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*X\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n" +
+                "*X*X*X*\n" +
+                "X*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "S"
+    },
+    {
+        brush:  "Y*X*Y\n" +
+                "*X*X*\n" +
+                "X*K*X\n" +
+                "*X*X*\n" +
+                "X*K*X\n" +
+                "*X*X*\n" +
+                "X*K*X\n" +
+                "*X*X*\n" +
+                "X*X*X\n",
+        label: "T"
+    },
+    {
+        brush:  "X*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*Y*Y*X\n",
+        label: "U"
+    },
+    {
+        brush:  "X*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*K*K*X\n",
+        label: "V"
+    },
+    {
+        brush:  "X*X*X*X*X\n" +
+                "*X*X*X*X*\n" +
+                "K*X*X*X*K\n" +
+                "*X*X*X*X*\n" +
+                "K*X*X*X*K\n" +
+                "*X*X*X*X*\n" +
+                "K*X*K*X*K\n" +
+                "*X*X*X*X*\n" +
+                "X*Y*X*Y*X\n",
+        label: "W"
+    },
+    {
+        brush:  "X*X*X*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*K*K*X\n" +
+                "*X*X*X*\n" +
+                "K*X*X*K\n" +
+                "*X*X*X*\n" +
+                "X*X*X*X\n",
+        label: "X"
+    },
+    {
+        brush:  "K*X*K\n" +
+                "*X*X*\n" +
+                "X*K*X\n" +
+                "*X*X*\n" +
+                "X*K*Y\n" +
+                "*X*X*\n" +
+                "X*K*X\n" +
+                "*X*X*\n" +
+                "X*X*X\n",
+        label: "Y"
+    },
+    {
+        brush:  "Y*Y*X\n" +
+                "*X*X*\n" +
+                "X*X*K\n" +
+                "*X*X*\n" +
+                "X*Y*X\n" +
+                "*X*X*\n" +
+                "K*K*X\n" +
+                "*X*X*\n" +
+                "X*Y*Y\n",
+        label: "Z"
+    },
+
+    {
+        brush:  
+"X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*Y*X*Y*X*X*X*X*X*Y*X*X*X*X*Y*Y*X*X*X*Y*Y*X*X*X*X*X*X*X*Y*Y*X*X*X*Y*Y*X*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*K*X*K*X*X*X*K*X*X*X*K*X*X*K*X*K*X*K*X*K*X*K*X*K*X*K*K*X*K*X*X*K*X*K*X*X*X*K*X*X*K*X*K*X*X*K*X*K*X*X*X*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*K*X*K*X*X*X*K*X*X*X*K*X*X*K*X*K*X*X*X*K*X*K*X*K*X*Y*K*X*K*X*X*K*X*K*Y*Y*X*K*X*X*K*X*K*X*X*K*X*X*Y*Y*X*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*K*X*K*X*X*X*K*X*X*X*K*X*X*K*X*K*X*X*X*K*X*K*X*K*X*X*K*X*K*X*X*K*X*K*X*X*X*K*X*X*K*X*K*X*X*K*X*X*X*X*K*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*X*X*X*Y*Y*X*X*Y*Y*X*X*Y*Y*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*Y*Y*X*X*X*Y*Y*X*X*Y*Y*X*X*X*Y*Y*X*X*X*Y*Y*X*X\n",
+        label: "ILLUMINOEUDS"
+
+    },
+    {
+        brush:  
+"X*Y*Y*X*X*Y*Y*X*X*Y*Y*X*X*Y*Y*X*X*X*X*X*X*X*Y*X*X*X*\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*K\n" +
+"K*X*X*X*K*X*X*K*K*X*X*X*K*X*X*K*K*X*X*K*K*K*X*K*K*X*\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X\n" +
+"K*Y*Y*X*K*Y*Y*X*K*Y*Y*X*K*Y*Y*K*K*Y*Y*X*K*K*X*Y*K*X*\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X\n" +
+"K*X*X*X*K*X*X*K*K*X*X*X*K*X*X*K*K*X*X*K*K*K*X*X*K*X*\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X\n" +
+"X*X*X*X*X*X*X*X*X*Y*Y*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n",
+        label: "FREAKIN"
+
+    },
+    {
+        brush:  
+//  F                 R                  E                  A                   K                I                N         '
+"X*Y*Y" + "*X*" + "X*Y*Y*X" + "*X*" + "X*Y*Y" + "*X*" + "X*Y*Y*X" + "*X*" + "X*X*X*X" + "*X*" + "X" + "*X*" + "X*Y*X*X" + "*K*" + "\n" +
+"*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*" + "X*X" + "*X*X*X*" + "X*X" + "\n" +
+"K*X*X" + "*X*" + "K*X*X*K" + "*X*" + "K*X*X" + "*X*" + "K*X*X*K" + "*X*" + "K*X*X*K" + "*X*" + "K" + "*X*" + "K*X*K*K" + "*X*" + "\n" +
+"*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*" + "X*X" + "*X*X*X*" + "X*X" + "\n" +
+"K*Y*Y" + "*X*" + "K*Y*Y*X" + "*X*" + "K*Y*Y" + "*X*" + "K*Y*Y*K" + "*X*" + "K*Y*Y*X" + "*X*" + "K" + "*X*" + "K*X*Y*K" + "*X*" + "\n" +
+"*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*" + "X*X" + "*X*X*X*" + "X*X" + "\n" +
+"K*X*X" + "*X*" + "K*X*X*K" + "*X*" + "K*X*X" + "*X*" + "K*X*X*K" + "*X*" + "K*X*X*K" + "*X*" + "K" + "*X*" + "K*X*X*K" + "*X*" + "\n" +
+"*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*" + "X*X" + "*X*X*X*" + "X*X" + "\n" +
+"X*X*X" + "*X*" + "X*X*X*X" + "*X*" + "X*Y*Y" + "*X*" + "X*X*X*X" + "*X*" + "X*X*X*X" + "*X*" + "X" + "*X*" + "X*X*X*X" + "*X*" +  "\n",
+        label: "FREAKIN2"
+
+    },
+    {
+        brush:  
+//  M                     E               N    
+ "X*Y*X*Y*X"+ "*X*" + "X*Y*Y"+ "*X*" + "X*Y*X*X" + "\n" +
+ "*X*X*X*X*"+ "X*X" + "*X*X*"+ "X*X" + "*X*X*X*" + "\n" +
+ "K*X*K*X*K"+ "*X*" + "K*X*X"+ "*X*" + "K*X*K*K" + "\n" +
+ "*X*X*X*X*"+ "X*X" + "*X*X*"+ "X*X" + "*X*X*X*" + "\n" +
+ "K*X*X*X*K"+ "*X*" + "K*Y*Y"+ "*X*" + "K*X*Y*K" + "\n" +
+ "*X*X*X*X*"+ "X*X" + "*X*X*"+ "X*X" + "*X*X*X*" + "\n" +
+ "K*X*X*X*K"+ "*X*" + "K*X*X"+ "*X*" + "K*X*X*K" + "\n" +
+ "*X*X*X*X*"+ "X*X" + "*X*X*"+ "X*X" + "*X*X*X*" + "\n" +
+ "X*X*X*X*X"+ "*X*" + "X*Y*Y"+ "*X*" + "X*X*X*X" +  "\n",
+        label: "MEN"
+    },
+    {
+        brush:  
+"X*Y*Y*X*X*X*X*X*X*X*Y*Y*X*X*Y*Y*X*Y*X*Y\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"K*X*X*X*K*X*X*X*K*K*X*X*X*K*X*X*X*X*K*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*Y*Y*X*K*X*X*X*K*K*Y*Y*X*K*Y*Y*X*X*K*Y\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*X*X*K*K*X*K*X*K*K*X*X*X*K*X*X*X*X*K*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*Y*Y*X*X*Y*X*Y*X*X*Y*Y*X*X*Y*Y*X*X*X*X\n",
+        label: "SWEET"
+
+    },
+    {
+        brush:  
+//  S                    W                   E                 E                 T  
+"X*Y*Y*X" + "*X*" + "X*X*X*X*X" + "*X*" + "X*Y*Y" + "*X*" + "X*Y*Y" + "*X*" + "Y*X*Y" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "\n" +
+"K*X*X*X" + "*X*" + "K*X*X*X*K" + "*X*" + "K*X*X" + "*X*" + "K*X*X" + "*X*" + "X*K*X" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "\n" +
+"X*Y*Y*X" + "*X*" + "K*X*X*X*K" + "*X*" + "K*Y*Y" + "*X*" + "K*Y*Y" + "*X*" + "X*K*X" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "\n" +
+"X*X*X*K" + "*X*" + "K*X*K*X*K" + "*X*" + "K*X*X" + "*X*" + "K*X*X" + "*X*" + "X*K*X" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*" + "\n" +
+"X*Y*Y*X" + "*X*" + "X*Y*X*Y*X" + "*X*" + "X*Y*Y" + "*X*" + "X*Y*Y" + "*X*" + "X*X*X" +  "\n",
+        label: "SWEET2"
+
+    },
+    {
+        brush:  
+"X*X*X*X*X*Y*X*X*X*Y*Y*X*Y*X*Y*X*Y*Y*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"K*X*X*K*K*X*K*K*K*X*X*K*X*K*X*K*X*X*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"K*Y*Y*X*K*X*Y*K*K*X*X*K*X*K*Y*X*Y*Y*X\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"K*X*X*K*K*X*X*K*K*X*X*K*X*K*X*X*X*X*K\n" +
+"*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*X*\n" +
+"X*X*X*X*X*X*X*X*X*Y*Y*X*X*X*X*X*Y*Y*X\n",
+        label: "KNOTS"
+
+    },
+    {
+        brush:  
+//  K                   N                   O                  T                  S  
+"X*X*X*X" + "*X*" + "X*Y*X*X" + "*X*" + "X*Y*Y*X" + "*X*" + "Y*X*Y" + "*X*" + "X*Y*Y*X" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "\n" +
+"K*X*X*K" + "*X*" + "K*X*K*K" + "*X*" + "K*X*X*K" + "*X*" + "X*K*X" + "*X*" + "K*X*X*X" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "\n" +
+"K*Y*Y*X" + "*X*" + "K*X*Y*K" + "*X*" + "K*X*X*K" + "*X*" + "X*K*X" + "*X*" + "X*Y*Y*X" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "\n" +
+"K*X*X*K" + "*X*" + "K*X*X*K" + "*X*" + "K*X*X*K" + "*X*" + "X*K*X" + "*X*" + "X*X*X*K" + "\n" +
+"*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*X*" + "X*X" + "*X*X*" + "X*X" + "*X*X*X*" + "\n" +
+"X*X*X*X" + "*X*" + "X*X*X*X" + "*X*" + "X*Y*Y*X" + "*X*" + "X*X*X" + "*X*" + "X*Y*Y*X" +  "\n",
+        label: "KNOTS2"
+
+    },
     {
         brush:  "X*v*\n" +
                 "*>*<\n" +
@@ -137,6 +583,7 @@ KnotCanvasController.prototype = {
         this.strand_width = 1/8*this.DPI;
         this.strand_height = this.strand_width;
         this.strand_gap_size = 1/8*this.DPI;
+//        this.shadow_width = 20;
         this.shadow_width = 3;
 
         this.grid_spacing = {
@@ -364,6 +811,7 @@ KnotCanvasController.prototype = {
             this.resize_coords = coords;
             this.resizing = true;
             this.resize_size = this.canvas.getSize();
+            knot_app.update();
         } else {
             var row;
             var col;
@@ -454,10 +902,10 @@ KnotCanvasController.prototype = {
                 }
                 this.grid.updateKnotInfo();
                 this.canvas.render();
+                knot_app.update();
             }
         }
 
-        knot_app.update();
     },
 
     calcMaxRowsCols: function(width, height) {
