@@ -1,3 +1,7 @@
 .show_when_printing {
     display: none;
 }
+
+.page-break {
+    display: none;
+}

@@ -282,6 +282,9 @@ KnotApp.prototype = {
                 size: parseInt($("gaucho_size").value),
                 topcoding: $("gaucho_topcoding").value,
             };
+            controller.codingString = "Locked Gaucho Coding - ";
+            controller.codingString += controller.grid.coding_opts.size + ", ";
+            controller.codingString += controller.grid.coding_opts.topcoding;
             controller.grid.updateCoding();
             controller.canvas.render();
 
@@ -296,6 +299,11 @@ KnotApp.prototype = {
                 midcoding: $("dog_bone_mid_coding").value,
                 botcoding: $("dog_bone_bot_coding").value,
             };
+            controller.codingString = "Dog Bone Coding - ";
+            controller.codingString += "Rows: " + controller.grid.coding_opts.rows + ", ";
+            controller.codingString += "Top: " + controller.grid.coding_opts.topcoding + ", ";
+            controller.codingString += "Middle: " + controller.grid.coding_opts.midcoding + ", ";
+            controller.codingString += "Bottom: " + controller.grid.coding_opts.botcoding;
             controller.grid.updateCoding();
             controller.canvas.render();
 
@@ -309,6 +317,10 @@ KnotApp.prototype = {
                 topcoding: $("tile_topcoding").value,
                 botcoding: $("tile_botcoding").value,
             };
+            controller.codingString = "Tile Coding - ";
+            controller.codingString += controller.grid.coding_opts.size + ", ";
+            controller.codingString += controller.grid.coding_opts.topcoding + ", ";
+            controller.codingString += controller.grid.coding_opts.botcoding;
             controller.grid.updateCoding();
             controller.canvas.render();
 
@@ -346,6 +358,8 @@ KnotApp.prototype = {
             controller.saveUndo();
             controller.grid.coding_func = controller.grid.rowCoding;
             controller.grid.coding_opts = $("coding").value;
+            controller.codingString = "Row Coding - ";
+            controller.codingString += controller.grid.coding_opts;
             controller.grid.updateCoding();
             controller.canvas.render();
             knot_app.update();
@@ -354,13 +368,19 @@ KnotApp.prototype = {
             controller.saveUndo();
             controller.grid.coding_func = controller.grid.columnCoding;
             controller.grid.coding_opts = $("coding").value;
+            controller.codingString = "Column Coding - ";
+            controller.codingString += controller.grid.coding_opts;
             controller.grid.updateCoding();
             controller.canvas.render();
+            knot_app.update();
         });
         connect($("standard_grid"), "onclick", function(e) {
             controller.saveUndo();
             controller.grid.grid_func = controller.grid.standardGrid;
             controller.grid.grid_opts = 0;
+
+            controller.gridString = "Standard Grid";
+
             controller.grid.updateGrid();
             knot_app.update();
         });
@@ -368,6 +388,7 @@ KnotApp.prototype = {
             controller.saveUndo();
             controller.grid.grid_func = controller.grid.matGrid;
             controller.grid.grid_opts = 0;
+            controller.gridString = "Mat Grid";
             controller.grid.updateGrid();
             knot_app.update();
         });
@@ -379,6 +400,10 @@ KnotApp.prototype = {
                 shift_bottom_bights: parseInt($("dog_bone_shift_bottom_bights").value),
                 rows: parseInt($("dog_bone_rows").value)
             };
+            controller.gridString = "Dog Bone Grid - ";
+            controller.gridString += "Nested Bights: " + controller.grid.grid_opts.nested_bights + ", ";
+            controller.gridString += "Shift Bottom Bights: " + controller.grid.grid_opts.shift_bottom_bights + ", ";
+            controller.gridString += "Rows: " + controller.grid.grid_opts.rows;
             controller.grid.updateGrid();
             knot_app.update();
         });
@@ -389,6 +414,9 @@ KnotApp.prototype = {
                 nested_bights: parseInt($("nested_bights").value),
                 shift_bottom_bights: parseInt($("shift_bottom_bights").value)
             };
+            controller.gridString = "Pineapple Grid - ";
+            controller.gridString += "Nested Bights: " + controller.grid.grid_opts.nested_bights + ", ";
+            controller.gridString += "Shift Bottom Bights: " + controller.grid.grid_opts.shift_bottom_bights;
             controller.grid.updateGrid();
             knot_app.update();
         });
@@ -404,6 +432,9 @@ KnotApp.prototype = {
                 nested_bights: parseInt($("nested_bights").value),
                 shift_bottom_bights: parseInt($("shift_bottom_bights").value)
             };
+            controller.gridString = "Bottom Pineapple Grid - ";
+            controller.gridString += "Nested Bights: " + controller.grid.grid_opts.nested_bights + ", ";
+            controller.gridString += "Shift Bottom Bights: " + controller.grid.grid_opts.shift_bottom_bights;
             controller.grid.updateGrid();
             knot_app.update();
         });
@@ -414,6 +445,9 @@ KnotApp.prototype = {
                 nested_bights: parseInt($("nested_bights").value),
                 shift_bottom_bights: parseInt($("shift_bottom_bights").value)
             };
+            controller.gridString = "Pineapple Plant Hanger Grid - ";
+            controller.gridString += "Nested Bights: " + controller.grid.grid_opts.nested_bights + ", ";
+            controller.gridString += "Shift Bottom Bights: " + controller.grid.grid_opts.shift_bottom_bights;
             controller.grid.updateGrid();
             knot_app.update();
         });
@@ -494,12 +528,12 @@ KnotApp.prototype = {
             length_str += "Strand " + (i+1) + ": " + len_inches.toFixed(4) + " inches (" + (len_inches*2.54).toFixed(4) + " cm)\n";
         }
         $("lengths").innerHTML = length_str;
+        $("lengths_pre").innerHTML = length_str;
         $("instructions").innerHTML = instructions.toString();
         $("instructions_pre").innerHTML = instructions.toString();
         $("knot_string").value = this.controller.grid.toString();
         $("strands").innerHTML = this.controller.grid.getNumStrands();
         $("crossings").innerHTML = this.controller.grid.getCrossings();
-        $("facets").innerHTML = this.controller.grid.getFacets();
         $("strand_width_inches").value = (this.controller.strand_width/this.controller.DPI).toFixed(4);
         $("strand_width_cm").value = (this.controller.strand_width*2.54/this.controller.DPI).toFixed(4);
         $("strand_gap_inches").value = (this.controller.strand_gap_size/this.controller.DPI).toFixed(4);
@@ -507,6 +541,8 @@ KnotApp.prototype = {
         $("dpi").value = this.controller.DPI;
         $("rows").innerHTML = this.controller.grid.rows;
         $("cols").innerHTML = this.controller.grid.cols;
+        $("grid_options").innerHTML = this.controller.gridString || "Standard Grid";
+        $("coding_options").innerHTML = this.controller.codingString || "Column Coding - OU";
 
 // do parts/bights calcs
 
@@ -526,5 +562,6 @@ KnotApp.prototype = {
         $("bights").innerHTML = bights/2;
 
         this.controller.update();
+        $("facets").innerHTML = this.controller.grid.getFacets();
     }
 };

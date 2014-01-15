@@ -77,6 +77,7 @@
     <div id="knot_canvas_border" style="padding: 10px">
     <canvas id="knot_canvas"></canvas><br/>
     </div>
+    <div class="page-break"></div>
 
     Rows: <span id="rows">12</span> Cols: <span id="cols">14</span><br/>
     Parts: <span id="parts">11</span> Bights: <span id="bights">7</span><br/>
@@ -85,6 +86,9 @@
     Strands: <span id="strands">1</span><br/>
     Crossings: <span id="crossings"></span><br/>
     Facets: <span id="facets"></span><br/>
+
+    Coding Options: <span id="coding_options"></span><br/>
+    Grid Options: <span id="grid_options"></span><br/>
 <div class="hide_when_printing">
     <img id="knot_image" src="" style="display: none"/><br/>
     <button id="create_image" title="Click this to create an image from the grid that can be saved.">View As Image</button><br/>
@@ -103,6 +107,8 @@
 </div>
     <div class="show_when_printing">
         <pre id="instructions_pre">
+        </pre>
+        <pre id="lengths_pre">
         </pre>
     </div>
 
