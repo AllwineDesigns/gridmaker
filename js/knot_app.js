@@ -498,6 +498,7 @@ KnotApp.prototype = {
         $("instructions_pre").innerHTML = instructions.toString();
         $("knot_string").value = this.controller.grid.toString();
         $("strands").innerHTML = this.controller.grid.getNumStrands();
+        $("crossings").innerHTML = this.controller.grid.getCrossings();
         $("facets").innerHTML = this.controller.grid.getFacets();
         $("strand_width_inches").value = (this.controller.strand_width/this.controller.DPI).toFixed(4);
         $("strand_width_cm").value = (this.controller.strand_width*2.54/this.controller.DPI).toFixed(4);

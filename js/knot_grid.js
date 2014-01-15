@@ -573,15 +573,52 @@ KnotGrid.prototype = {
 
     getFacets: function() {
         var facets = 0;
-        for(var r = 0; r < this.rows; r++) {
-            for(var c = 0; c < this.cols; c++) {
-                if(this.grid[r][c] == KnotGridValues.X) {
-                    facets++;
+        var start_locs = this.getDefaultStartLocations();
+        for(var i = 0; i < start_locs.length; i++) {
+            var start_loc = start_locs[i];
+            start_loc.dir = flipDirection(start_loc.dir, this.grid[start_loc.row][start_loc.col]);
+            var backupWalker = new KnotGridWalker(this, start_loc);
+            while(backupWalker.next()) {
+                if(backupWalker.isOnCrossing()) {
+                    var loc = backupWalker.getLocation();
+                    if(!this.isOver(loc)) {
+                        start_loc = loc;
+                        start_loc.dir = flipDirection(start_loc.dir, this.grid[loc.row][loc.col]);
+                        break;
+                    }
+                }
+            }
+
+            var walker = new KnotGridWalker(this,start_loc);
+            var lastCrossingOver = false;
+            while(walker.next()) {
+                if(walker.isOnCrossing()) {
+                    if(this.isOver(walker.getLocation())) {
+                        if(!lastCrossingOver) {
+                            facets++;
+                        }
+                        lastCrossingOver = true;
+                    } else {
+                        lastCrossingOver = false;
+                    }
                 }
             }
         }
 
         return facets;
+    },
+
+    getCrossings: function() {
+        var crossings = 0;
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                if(this.grid[r][c] == KnotGridValues.X) {
+                    crossings++;
+                }
+            }
+        }
+
+        return crossings;
     },
 
     updateGrid: function() {
