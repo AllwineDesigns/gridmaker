@@ -534,10 +534,20 @@ KnotApp.prototype = {
         $("knot_string").value = this.controller.grid.toString();
         $("strands").innerHTML = this.controller.grid.getNumStrands();
         $("crossings").innerHTML = this.controller.grid.getCrossings();
-        $("strand_width_inches").value = (this.controller.strand_width/this.controller.DPI).toFixed(4);
-        $("strand_width_cm").value = (this.controller.strand_width*2.54/this.controller.DPI).toFixed(4);
-        $("strand_gap_inches").value = (this.controller.strand_gap_size/this.controller.DPI).toFixed(4);
-        $("strand_gap_cm").value = (this.controller.strand_gap_size*2.54/this.controller.DPI).toFixed(4);
+        var strand_width_in = (this.controller.strand_width/this.controller.DPI).toFixed(4)
+        var strand_width_cm = (this.controller.strand_width*2.54/this.controller.DPI).toFixed(4);
+        $("strand_width_inches").value = strand_width_in;
+        $("strand_width_cm").value = strand_width_cm; 
+
+        $("strand_width_print").innerHTML = strand_width_in + " inches (" + strand_width_cm + " cm)";
+
+        var strand_gap_in = (this.controller.strand_gap_size/this.controller.DPI).toFixed(4);
+        var strand_gap_cm = (this.controller.strand_gap_size*2.54/this.controller.DPI).toFixed(4);
+
+        $("strand_gap_inches").value = strand_gap_in;
+        $("strand_gap_cm").value = strand_gap_cm;
+        $("strand_gap_size_print").innerHTML = strand_gap_in + " inches (" + strand_gap_cm + " cm)";
+
         $("dpi").value = this.controller.DPI;
         $("rows").innerHTML = this.controller.grid.rows;
         $("cols").innerHTML = this.controller.grid.cols;
