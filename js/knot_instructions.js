@@ -73,13 +73,14 @@ StrandInstructions.prototype = {
     }
 };
 
-function KnotInstructions(grid, start_locs, do_letter_pins, do_half_way) {
-    this.init(grid,start_locs,do_letter_pins, do_half_way);
+function KnotInstructions(grid, start_locs, do_letter_pins, do_half_way, do_short_hand) {
+    this.init(grid,start_locs,do_letter_pins, do_half_way, do_short_hand);
 }
 
 KnotInstructions.prototype = {
-    init: function(grid, start_locs,do_letter_pins,do_half_way) {
+    init: function(grid, start_locs,do_letter_pins,do_half_way, do_short_hand) {
         this.do_letter_pins = do_letter_pins;
+        this.do_short_hand = do_short_hand;
         this.instructions = [];
         this.grid = grid;
 
@@ -277,8 +278,26 @@ KnotInstructions.prototype = {
                 }
 
                 str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).rpad(" ", 7) + " ";
-                for(var k = 0; k < run_list.length; k++) {
-                    str_out += run_list[k] + " ";
+                if(this.do_short_hand) {
+                    var lastMove = '';
+                    var num = 0;
+                    for(var k = 0; k < run_list.length; k++) {
+                        if(run_list[k] == ".") continue;
+
+                        if(num > 0 && run_list[k] != lastMove) {
+                            str_out += lastMove + num + " ";
+                            num = 0;
+                        }
+                        lastMove = run_list[k];
+                        num++;
+                    }
+                    if(num > 0) {
+                        str_out += lastMove + num + " ";
+                    }
+                } else {
+                    for(var k = 0; k < run_list.length; k++) {
+                        str_out += run_list[k] + " ";
+                    }
                 }
                 str_out += ("to " + pinmap.getPin(end_loc.row, end_loc.col)).lpad(" ", 10) + "\n";
 //                console.log("Start - " + start_loc.row + ", " + start_loc.col + ": " + pinmap.getPin(start_loc.row, start_loc.col));
