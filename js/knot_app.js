@@ -495,6 +495,7 @@ KnotApp.prototype = {
         }
         $("lengths").innerHTML = length_str;
         $("instructions").innerHTML = instructions.toString();
+        $("instructions_pre").innerHTML = instructions.toString();
         $("knot_string").value = this.controller.grid.toString();
         $("strands").innerHTML = this.controller.grid.getNumStrands();
         $("facets").innerHTML = this.controller.grid.getFacets();

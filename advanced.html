@@ -1,6 +1,8 @@
 <html>
 
 <head>
+    <link href="styles/style.css" type="text/css" rel="stylesheet"/>
+    <link href="styles/print.css" type="text/css" rel="stylesheet" media="print"/>
     <script language="Javascript" src="js/unFocus-History-p.js"></script>
     <script language="Javascript" src="js/bmp_lib.js"></script>
     <script language="Javascript" src="js/MochiKit.js"></script>
@@ -38,7 +40,8 @@
     </script>
 </head>
 <body>
-<h3>If you like this tool, please consider liking my Facebook page: <a href="https://www.facebook.com/freakinsweetknots">https://www.facebook.com/freakinsweeetknots</a></h3>
+<div class="hide_when_printing">
+<h3>If you like this tool, please consider liking my Facebook page: <a href="https://www.facebook.com/freakinsweetknots">https://www.facebook.com/freakinsweetknots</a></h3>
     <button id="stretch">Stretch</button><button id="resize">Resize</button><br/>
     <button id="rowcoding">Row Coding</button><button id="colcoding">Column Coding</button><input type="text" value="OU" id="coding"/><br/>
     <button id="tilecoding">Tile Coding</button><input type="text" value="4" id="tile_size"/><input type="text" value="O" id="tile_topcoding"/><input type="text" value="U" id="tile_botcoding"/><br/>
@@ -70,9 +73,12 @@
     <button id="remove_nonloops">Remove Non-Loop Strands</button><button id="clear_grid">Clear Grid</button><br/>
     <button id="extend_strands">Extend Strands</button><button id="remove_strand" title="Once remove strand is clicked, click on a grid location to remove the strand on that location. Use the alt key to distinguish between two separate strands passing over the same location.">Remove Strand</button><br/>
     <button id="undo">Undo</button><button id="redo">Redo</button><br/>
+</div>
     <div id="knot_canvas_border" style="padding: 10px">
     <canvas id="knot_canvas"></canvas><br/>
     </div>
+
+<div class="hide_when_printing">
     Rows: <span id="rows">12</span> Cols: <span id="cols">14</span><br/>
     Parts: <span id="parts">11</span> Bights: <span id="bights">7</span><br/>
     Size (inches): <span id="width_inches"></span> x <span id="height_inches"></span><br/>
@@ -93,6 +99,12 @@
     Save/Load Knot Data:<br/>
     <textarea id="knot_string" style="width: 500px; height: 400px; font-family: Monospace"></textarea><br/>
     <button id="load_knot">Load Knot</button>
+</div>
+    <div class="show_when_printing">
+        <pre id="instructions_pre">
+        </pre>
+    </div>
+
 </body>
 
 </html>

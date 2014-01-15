@@ -1,3 +1,10 @@
+StartCorner = {
+    TOP_LEFT: 1,
+    TOP_RIGHT: 2,
+    BOTTOM_LEFT: 3,
+    BOTTOM_RIGHT: 4
+};
+
 function PinMap() {
     this.init();
 }
@@ -345,7 +352,10 @@ KnotGrid.prototype = {
         return true;
     },
 
-    getDefaultStartLocations: function() {
+    getDefaultStartLocations: function(corner) {
+        if(!corner) {
+            corner = StartCorner.TOP_LEFT;
+        }
         var start_locs = [];
         var grid = this.copy();
         for(var r = 0; r < this.rows; r++) {

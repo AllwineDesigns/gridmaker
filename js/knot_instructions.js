@@ -278,6 +278,7 @@ KnotInstructions.prototype = {
                 }
 
                 str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).rpad(" ", 7) + " ";
+                var run_list_len = 0;
                 if(this.do_short_hand) {
                     var lastMove = '';
                     var num = 0;
@@ -285,8 +286,14 @@ KnotInstructions.prototype = {
                         if(run_list[k] == ".") continue;
 
                         if(num > 0 && run_list[k] != lastMove) {
-                            str_out += lastMove + num + " ";
+                            var move = lastMove + num + " ";
+                            str_out += move;
+                            run_list_len += move.length;
                             num = 0;
+                            if(run_list_len > 32*3) {
+                                str_out += "\n             ";
+                                run_list_len = 0;
+                            }
                         }
                         lastMove = run_list[k];
                         num++;
@@ -296,7 +303,13 @@ KnotInstructions.prototype = {
                     }
                 } else {
                     for(var k = 0; k < run_list.length; k++) {
-                        str_out += run_list[k] + " ";
+                        var move = run_list[k] + " ";
+                        str_out += move;
+                        run_list_len += move.length;
+                        if(run_list_len > 32*3) {
+                            str_out += "\n             ";
+                            run_list_len = 0;
+                        }
                     }
                 }
                 str_out += ("to " + pinmap.getPin(end_loc.row, end_loc.col)).lpad(" ", 10) + "\n";
