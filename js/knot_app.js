@@ -1,5 +1,25 @@
 PI = 3.14159265359
 
+var isReady = false;
+var do3D = true;
+function UnityReady(msg) {
+    isReady = true;
+    knot_app.update();
+    console.log("Ready");
+}
+
+function UpdateRingInfo(msg) {
+}
+
+function SendUnityMessage(obj,func,msg) {
+    if(isReady) {
+        if(do3D) {
+            console.log(obj + " " + func + " " + msg);
+            u.getUnity().SendMessage(obj, func, msg);
+        }
+    }
+}
+
 function KnotApp() {
     this.init();
 }
@@ -56,7 +76,7 @@ KnotApp.prototype = {
         var controller = new KnotCanvasController(canvas, grid);
         this.controller = controller;
         this.controller.do_letter_pins = true;
-        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), true, false, false);
+        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), this.controller.colors, true, false, false);
         this.do_every_other = false;
         this.do_half_way = false;
         this.do_short_hand = false;
@@ -199,6 +219,9 @@ KnotApp.prototype = {
                 height_cm_str += " (" + (2.54*height_inches/PI).toFixed(4) + " cm diameter)";
             }
 
+            SendUnityMessage("KnotGridWebHooks", "SetDiameter", (width_inches*25.4/PI).toFixed(4));
+            SendUnityMessage("KnotGridWebHooks", "SetHeight", (height_inches*25.4).toFixed(4));
+
             $("width_inches").innerHTML = width_inches_str;
             $("height_inches").innerHTML = height_inches_str;
 
@@ -260,6 +283,9 @@ KnotApp.prototype = {
                 height_inches_str += " (" + (height_inches/PI).toFixed(4) + " inch diameter)";
                 height_cm_str += " (" + (2.54*height_inches/PI).toFixed(4) + " cm diameter)";
             }
+
+            SendUnityMessage("KnotGridWebHooks", "SetDiameter", (width_inches*25.4/PI).toFixed(4));
+            SendUnityMessage("KnotGridWebHooks", "SetHeight", (height_inches*25.4).toFixed(4));
 
             $("width_inches").innerHTML = width_inches_str;
             $("height_inches").innerHTML = height_inches_str;
@@ -407,6 +433,14 @@ KnotApp.prototype = {
             controller.grid.updateGrid();
             knot_app.update();
         });
+        /*
+        connect($("cylinder3d"), "onclick", function(e) {
+            SendUnityMessage("KnotGridWebHooks", "SetCylinder", "");
+        });
+        connect($("sphere3d"), "onclick", function(e) {
+            SendUnityMessage("KnotGridWebHooks", "SetRelaxedSphere", "");
+        });
+        */
         connect($("pineapple_grid"), "onclick", function(e) {
             controller.saveUndo();
             controller.grid.grid_func = controller.grid.pineappleGrid;
@@ -475,6 +509,9 @@ KnotApp.prototype = {
             height_cm_str += " (" + (2.54*height_inches/PI).toFixed(4) + " cm diameter)";
         }
 
+        SendUnityMessage("KnotGridWebHooks", "SetDiameter", (width_inches*25.4/PI).toFixed(4));
+        SendUnityMessage("KnotGridWebHooks", "SetHeight", (height_inches*25.4).toFixed(4));
+
         $("width_inches").innerHTML = width_inches_str;
         $("height_inches").innerHTML = height_inches_str;
 
@@ -512,10 +549,10 @@ KnotApp.prototype = {
         var instructions;
         var strand_lengths;
         if(this.do_every_other) {
-            instructions = new KnotInstructions(this.controller.grid, every_other, this.do_letter_pins, this.do_half_way, this.do_short_hand);
+            instructions = new KnotInstructions(this.controller.grid, every_other, this.controller.colors, this.do_letter_pins, this.do_half_way, this.do_short_hand);
             strand_lengths = this.controller.strandLengths(every_other);
         } else {
-            instructions = new KnotInstructions(this.controller.grid, default_start_locs, this.do_letter_pins, this.do_half_way, this.do_short_hand);
+            instructions = new KnotInstructions(this.controller.grid, default_start_locs, this.controller.colors, this.do_letter_pins, this.do_half_way, this.do_short_hand);
             strand_lengths = this.controller.strandLengths(default_start_locs);
         }
         this.controller.instructions = instructions;
@@ -525,10 +562,15 @@ KnotApp.prototype = {
         var length_str = "";
         for(var i = 0; i < strand_lengths.length; i++) {
             len_inches = (strand_lengths[i]/this.controller.DPI);
-            length_str += "Strand " + (i+1) + ": " + len_inches.toFixed(4) + " inches (" + (len_inches*2.54).toFixed(4) + " cm)\n";
+            var feet = Math.floor(len_inches/12);
+            var inches = len_inches-feet*12;
+            length_str += "Strand " + (i+1) + " (" + this.controller.colors[i%this.controller.colors.length] + "): " + feet + " feet " + inches.toFixed(4) + " inches (" + (len_inches*2.54).toFixed(4) + " cm)\n";
         }
+        $("colors_printout").innerHTML = $("colors").value;
+        $("shadow_colors_printout").innerHTML = $("shadow_colors").value;
         $("lengths").innerHTML = length_str;
         $("lengths_pre").innerHTML = length_str;
+        $("knot_data_pre").innerHTML = this.controller.grid.toString();
         $("instructions").innerHTML = instructions.toString();
         $("instructions_pre").innerHTML = instructions.toString();
         $("knot_string").value = this.controller.grid.toString();
@@ -538,6 +580,10 @@ KnotApp.prototype = {
         var strand_width_cm = (this.controller.strand_width*2.54/this.controller.DPI).toFixed(4);
         $("strand_width_inches").value = strand_width_in;
         $("strand_width_cm").value = strand_width_cm; 
+
+        var strand_width_mm = (this.controller.strand_width*25.4/this.controller.DPI).toFixed(4);
+
+        SendUnityMessage("KnotGridWebHooks", "SetTubeDiameter", strand_width_mm);
 
         $("strand_width_print").innerHTML = strand_width_in + " inches (" + strand_width_cm + " cm)";
 
@@ -573,5 +619,7 @@ KnotApp.prototype = {
 
         this.controller.update();
         $("facets").innerHTML = this.controller.grid.getFacets();
+
+        SendUnityMessage("KnotGridWebHooks", "SetKnotGrid", this.controller.grid.toString());
     }
 };

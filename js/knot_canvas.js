@@ -206,10 +206,14 @@ KnotCanvas.prototype = {
                     if(grid.isBight(row,col) || is_start_loc) {
                         ctx.fillStyle = "black";
                         var P = this.grid2coords(row,col);
+                        var fontsize = Math.round(10/90*this.controller.DPI);
+                        var font = fontsize+"px arial";
+                        ctx.font = font;
+                        var offset = 5/90*this.controller.DPI;
                         if(row == 0) {
-                            ctx.fillText(pinmap.getPin(row,col), P.x-5, P.y-5);
+                            ctx.fillText(pinmap.getPin(row,col), P.x-offset, P.y-offset);
                         } else if(row == grid.rows-1) {
-                            ctx.fillText(pinmap.getPin(row,col), P.x-5, P.y+15);
+                            ctx.fillText(pinmap.getPin(row,col), P.x-offset, P.y+offset+fontsize);
                         } else {
                             ctx.fillText(pinmap.getPin(row,col), P.x-5, P.y+5);
                         }
@@ -604,7 +608,14 @@ KnotCanvas.prototype = {
         ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = colors.shadow;
+        var grd=ctx.createLinearGradient(x6,y6,x7,y7);
+        grd.addColorStop(0,colors.under);
+        grd.addColorStop(.25,colors.shadow);
+        grd.addColorStop(.75,colors.shadow);
+        grd.addColorStop(1,colors.under);
+
+//        ctx.fillStyle = colors.shadow;
+        ctx.fillStyle = grd;
         ctx.beginPath();
         ctx.moveTo(x5, y5);
         ctx.lineTo(x6,y6);
@@ -683,7 +694,14 @@ KnotCanvas.prototype = {
         ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = colors.shadow;
+        var grd=ctx.createLinearGradient(x6,y6,x7,y7);
+        grd.addColorStop(0,colors.under);
+        grd.addColorStop(.25,colors.shadow);
+        grd.addColorStop(.75,colors.shadow);
+        grd.addColorStop(1,colors.under);
+
+//        ctx.fillStyle = colors.shadow;
+        ctx.fillStyle = grd;
         ctx.beginPath();
         ctx.moveTo(x5, y5);
         ctx.lineTo(x6,y6);

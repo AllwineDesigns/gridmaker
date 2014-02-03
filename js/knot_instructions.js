@@ -73,12 +73,13 @@ StrandInstructions.prototype = {
     }
 };
 
-function KnotInstructions(grid, start_locs, do_letter_pins, do_half_way, do_short_hand) {
-    this.init(grid,start_locs,do_letter_pins, do_half_way, do_short_hand);
+function KnotInstructions(grid, start_locs, labels, do_letter_pins, do_half_way, do_short_hand) {
+    this.init(grid,start_locs,labels, do_letter_pins, do_half_way, do_short_hand);
 }
 
 KnotInstructions.prototype = {
-    init: function(grid, start_locs,do_letter_pins,do_half_way, do_short_hand) {
+    init: function(grid, start_locs,labels, do_letter_pins,do_half_way, do_short_hand) {
+        this.labels = labels;
         this.do_letter_pins = do_letter_pins;
         this.do_short_hand = do_short_hand;
         this.instructions = [];
@@ -263,7 +264,7 @@ KnotInstructions.prototype = {
         for(var i = 0; i < this.instructions.length; i++) {
             var strand = this.instructions[i];
             var half_cycles = strand.getHalfCycles();
-            str_out += "Strand " + (i+1) + "\n";
+            str_out += "Strand " + (i+1) + " (" + this.labels[i%this.labels.length] + ")\n";
             for(var j = 0; j < half_cycles.length; j++) {
                 var hc = half_cycles[j];
                 var start_loc = hc.getStartLoc();
@@ -282,11 +283,18 @@ KnotInstructions.prototype = {
                 if(this.do_short_hand) {
                     var lastMove = '';
                     var num = 0;
+                    if(i == 0 && j == 0) {
+                        var around = Math.floor(run_list.length/this.grid.cols);
+                        if(around > 0) {
+                            str_out += " around " + around + "x";
+                        }
+                    }
                     for(var k = 0; k < run_list.length; k++) {
                         if(run_list[k] == ".") continue;
 
                         if(num > 0 && run_list[k] != lastMove) {
-                            var move = lastMove + num + " ";
+                            var move = lastMove + num;
+                            if(lastMove == 'U') move += " ";
                             str_out += move;
                             run_list_len += move.length;
                             num = 0;

@@ -584,7 +584,7 @@ KnotCanvasController.prototype = {
         this.strand_height = this.strand_width;
         this.strand_gap_size = 1/8*this.DPI;
 //        this.shadow_width = 20;
-        this.shadow_width = 3;
+        this.shadow_width = .045*this.DPI;
 
         this.grid_spacing = {
             row: (this.strand_width+this.strand_gap_size)*Math.sqrt(2)/2,
@@ -612,6 +612,11 @@ KnotCanvasController.prototype = {
         this.strand_width = sw*this.DPI;
         this.strand_height = this.strand_width;
         this.strand_gap_size = sg*this.DPI;
+        this.shadow_width = .045*this.DPI;
+        this.padding = {
+            x: 0,
+            y: 10/90*this.DPI
+        };
 
         this.grid_spacing = {
             row: (this.strand_width+this.strand_gap_size)*Math.sqrt(2)/2,
