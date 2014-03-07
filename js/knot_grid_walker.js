@@ -95,7 +95,7 @@ function getDefaultKnotDirection(knot_value) {
         case KnotGridValues.UPPER_BIGHT:
             return KnotDirection.DOWN_RIGHT;
         case KnotGridValues.LOWER_BIGHT:
-            return KnotDirection.UP_RIGHT;
+            return KnotDirection.UP_LEFT;
         case KnotGridValues.LEFT_BIGHT:
             return KnotDirection.UP_RIGHT;
         case KnotGridValues.RIGHT_BIGHT:

@@ -358,10 +358,80 @@ KnotGrid.prototype = {
         }
         var start_locs = [];
         var grid = this.copy();
-        for(var r = 0; r < this.rows; r++) {
-            for(var c = 0; c < this.cols; c++) {
+
+        var preferDirection;
+        var startRow;
+        var startCol;
+        var rowCondition;
+        var colCondition;
+        var rowIncr;
+        var colIncr;
+
+        var lessThan = function(endI) {
+            return function(i) {
+                return i < endI;
+            };
+        };
+        var greaterThanOrEqualTo = function(endI) {
+            return function(i) {
+                return i >= endI;
+            }
+        };
+
+        switch(corner) {
+            case StartCorner.TOP_LEFT:
+                startRow = 0;
+                startCol = 0;
+                preferDirection = KnotDirection.DOWN_RIGHT;
+                rowCondition = lessThan(this.rows);
+                colCondition = lessThan(this.cols);
+                rowIncr = 1;
+                colIncr = 1;
+                break;
+            case StartCorner.TOP_RIGHT:
+                startRow = 0;
+                startCol = (this.cols-1);
+                preferDirection = KnotDirection.DOWN_LEFT;
+                rowCondition = lessThan(this.rows);
+                colCondition = greaterThanOrEqualTo(0);
+                rowIncr = 1;
+                colIncr = -1;
+                break;
+            case StartCorner.BOTTOM_LEFT:
+                startRow = this.rows-1;
+                startCol = 0;
+                preferDirection = KnotDirection.UP_RIGHT;
+                rowCondition = greaterThanOrEqualTo(0);
+                colCondition = lessThan(this.cols);
+                rowIncr = -1;
+                colIncr = 1;
+                break;
+            case StartCorner.BOTTOM_RIGHT:
+                startRow = this.rows-1;
+                startCol = this.cols-1;
+                preferDirection = KnotDirection.UP_LEFT;
+                rowCondition = greaterThanOrEqualTo(0);
+                colCondition = greaterThanOrEqualTo(0);
+                rowIncr = -1;
+                colIncr = -1;
+                break;
+        }
+
+        for(var r = startRow; rowCondition(r); r += rowIncr) {
+            for(var c = startCol; colCondition(c); c += colIncr) {
                 if(grid.hasValue(r,c)) {
-                    var loc = new KnotLocation(r,c, getDefaultKnotDirection(grid.grid[r][c]));
+                    var startDir = -1;
+                    var validDirs = ValidKnotDirections[grid.grid[r][c]];
+                    for(var i = 0; i < validDirs.length; i++) {
+                        if(validDirs[i] == preferDirection) {
+                            startDir = preferDirection;
+                            break;
+                        }
+                    }
+                    if(startDir == -1) {
+                        startDir = getDefaultKnotDirection(grid.grid[r][c]);
+                    }
+                    var loc = new KnotLocation(r,c, startDir);
                     if(grid.isLoop(loc)) {
                         var bights = grid.findBights(loc);
                         start_locs.push(bights[0]);

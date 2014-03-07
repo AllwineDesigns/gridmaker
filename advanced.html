@@ -72,7 +72,8 @@
     <select id="brushes"></select><button id="set_brush">Set Brush</button><br/>
     <button id="remove_nonloops">Remove Non-Loop Strands</button><button id="clear_grid">Clear Grid</button><br/>
     <button id="extend_strands">Extend Strands</button><button id="remove_strand" title="Once remove strand is clicked, click on a grid location to remove the strand on that location. Use the alt key to distinguish between two separate strands passing over the same location.">Remove Strand</button><br/>
-    <button id="undo">Undo</button><button id="redo">Redo</button><br/>
+    <button id="undo">Undo</button><button id="redo">Redo</button>
+    <button id="copy">Copy</button><button id="paste">Paste</button><br/>
 </div>
     <div id="knot_canvas_border" style="padding: 10px">
     <canvas id="knot_canvas"></canvas><br/>
@@ -101,6 +102,12 @@
     <input type="checkbox" id="do_short_hand"> Consolidate overs and unders<br/>
     <input type="checkbox" id="do_half_way"> Do half way<br/>
     <input type="checkbox" id="do_letter_pins" checked="checked"> Label pins with letters<br/>
+    Start Corner: <select id="start_corner">
+        <option value="1">Top Left</option>
+        <option value="2">Top Right</option>
+        <option value="3">Bottom Left</option>
+        <option value="4">Bottom Right</option>
+    </select><br/><br/>
     Strand Lengths:<br/>
     <textarea id="lengths" style="width: 500px; height: 200px; font-family: Monospace"></textarea><br/>
     Instructions:<br/>

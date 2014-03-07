@@ -76,7 +76,8 @@ KnotApp.prototype = {
         var controller = new KnotCanvasController(canvas, grid);
         this.controller = controller;
         this.controller.do_letter_pins = true;
-        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), this.controller.colors, true, false, false);
+
+        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(this.start_corner), this.controller.colors, true, false, false);
         this.do_every_other = false;
         this.do_half_way = false;
         this.do_short_hand = false;
@@ -99,6 +100,12 @@ KnotApp.prototype = {
             knot_app.update();
         }, this));
 
+        connect($("start_corner"), "onchange", bind(function() {
+            var select = $("start_corner");
+            this.start_corner = parseInt(select.options[select.selectedIndex].value);
+            knot_app.update();
+        }, this));
+
         connect($("do_half_way"), "onclick", bind(function() {
             this.do_half_way = $("do_half_way").checked;
             knot_app.update();
@@ -107,6 +114,13 @@ KnotApp.prototype = {
             this.do_short_hand = $("do_short_hand").checked;
             knot_app.update();
         }, this));
+        connect($("copy"), "onclick", function() {
+            controller.setClickMode(KnotCanvasClickMode.COPY);
+        });
+        connect($("paste"), "onclick", function() {
+            controller.brush = controller.copy_brush;
+            controller.setClickMode(KnotCanvasClickMode.SET_BRUSH);
+        });
 
         connect($("set_brush"), "onclick", function() {
             var opt = brushes_select.options[brushes_select.selectedIndex];
@@ -536,7 +550,7 @@ KnotApp.prototype = {
     },
 
     update: function() {
-        var default_start_locs = this.controller.grid.getDefaultStartLocations();
+        var default_start_locs = this.controller.grid.getDefaultStartLocations(this.start_corner);
         var every_other = [];
         for(var i = 0; i < default_start_locs.length; i += 2) {
             every_other.push(default_start_locs[i]);

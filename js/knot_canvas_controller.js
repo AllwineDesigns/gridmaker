@@ -3,6 +3,8 @@ function KnotCanvasController(knot_canvas, knot_grid) {
 }
 
 KnotCanvasClickMode = {
+    COPY: "copy",
+    PASTE: "paste",
     TOGGLE_CODING: "toggle_coding",
     SET_OVER: "set_over",
     SET_UNDER: "set_under",
@@ -798,8 +800,59 @@ KnotCanvasController.prototype = {
 
     mouseUp: function(e) {
         var coords = this.canvas.getRelativeCoordinates(e.mouse().page);
-        this.resizing = false;
-        this.canvas.render();
+        if(this.click_mode == KnotCanvasClickMode.COPY) {
+            var row;
+            var col;
+            if(this.rows_wrap) {
+                row = Math.floor((coords.y-this.padding.y)/this.grid_spacing.row);
+            } else {
+                row = Math.floor((coords.y-.5*this.strand_width-this.padding.y+this.grid_spacing.row*.5)/this.grid_spacing.row);
+            }
+            if(this.cols_wrap) {
+                col = Math.floor((coords.x-this.padding.x)/this.grid_spacing.col);
+            } else {
+                col = Math.floor((coords.x-.5*this.strand_width-this.padding.x+this.grid_spacing.col*.5)/this.grid_spacing.col);
+            }
+            if(row >= 0 && row < this.grid.rows && col >= 0 && col < this.grid.cols && this.grid.grid[row][col] != KnotGridValues.INVALID) {
+                var from_row;
+                var from_col;
+                var to_row;
+                var to_col;
+                if(row > this.copy_from_row) {
+                    from_row = this.copy_from_row;
+                    to_row = row;
+                } else {
+                    to_row = this.copy_from_row;
+                    from_row = row;
+                }
+
+                if(col > this.copy_from_col) {
+                    from_col = this.copy_from_col;
+                    to_col = col;
+                } else {
+                    from_col = col;
+                    to_col = this.copy_from_col;
+                }
+
+                var brush = {
+                    brush: [],
+                    label: "copy"
+                };
+
+                for(var r = from_row; r <= to_row; r++) {
+                    brush.brush[r-from_row] = [];
+                    for(var c = from_col; c <= to_col; c++) {
+                        brush.brush[r-from_row][c-from_col] = this.grid.grid[r][c];
+                    }
+                }
+                console.log(brush);
+
+                this.copy_brush = brush;
+            }
+        } else {
+            this.resizing = false;
+            this.canvas.render();
+        }
     },
 
     mouseDown: function(e) {
@@ -903,6 +956,11 @@ KnotCanvasController.prototype = {
                                 }
                             }
                         }
+                        break;
+                    case KnotCanvasClickMode.COPY:
+                        this.copy_from_row = row;
+                        this.copy_from_col = col; 
+                        return;
                         break;
                 }
                 this.grid.updateKnotInfo();
