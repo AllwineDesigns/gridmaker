@@ -352,7 +352,7 @@ KnotGrid.prototype = {
         return true;
     },
 
-    getDefaultStartLocations: function(corner) {
+    getDefaultStartLocations: function(corner,prefer_dir) {
         if(!corner) {
             corner = StartCorner.TOP_LEFT;
         }
@@ -382,7 +382,7 @@ KnotGrid.prototype = {
             case StartCorner.TOP_LEFT:
                 startRow = 0;
                 startCol = 0;
-                preferDirection = KnotDirection.DOWN_RIGHT;
+                preferDirection = prefer_dir ? prefer_dir : KnotDirection.DOWN_RIGHT;
                 rowCondition = lessThan(this.rows);
                 colCondition = lessThan(this.cols);
                 rowIncr = 1;
@@ -391,7 +391,7 @@ KnotGrid.prototype = {
             case StartCorner.TOP_RIGHT:
                 startRow = 0;
                 startCol = (this.cols-1);
-                preferDirection = KnotDirection.DOWN_LEFT;
+                preferDirection = prefer_dir ? prefer_dir : KnotDirection.DOWN_LEFT;
                 rowCondition = lessThan(this.rows);
                 colCondition = greaterThanOrEqualTo(0);
                 rowIncr = 1;
@@ -400,7 +400,7 @@ KnotGrid.prototype = {
             case StartCorner.BOTTOM_LEFT:
                 startRow = this.rows-1;
                 startCol = 0;
-                preferDirection = KnotDirection.UP_RIGHT;
+                preferDirection = prefer_dir ? prefer_dir : KnotDirection.UP_LEFT;
                 rowCondition = greaterThanOrEqualTo(0);
                 colCondition = lessThan(this.cols);
                 rowIncr = -1;
@@ -409,7 +409,7 @@ KnotGrid.prototype = {
             case StartCorner.BOTTOM_RIGHT:
                 startRow = this.rows-1;
                 startCol = this.cols-1;
-                preferDirection = KnotDirection.UP_LEFT;
+                preferDirection = prefer_dir ? prefer_dir : KnotDirection.UP_LEFT;
                 rowCondition = greaterThanOrEqualTo(0);
                 colCondition = greaterThanOrEqualTo(0);
                 rowIncr = -1;

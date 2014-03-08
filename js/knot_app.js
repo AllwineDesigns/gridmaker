@@ -77,7 +77,7 @@ KnotApp.prototype = {
         this.controller = controller;
         this.controller.do_letter_pins = true;
 
-        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(this.start_corner), this.controller.colors, true, false, false);
+        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(this.start_corner,this.start_direction), this.controller.colors, true, false, false);
         this.do_every_other = false;
         this.do_half_way = false;
         this.do_short_hand = false;
@@ -103,6 +103,11 @@ KnotApp.prototype = {
         connect($("start_corner"), "onchange", bind(function() {
             var select = $("start_corner");
             this.start_corner = parseInt(select.options[select.selectedIndex].value);
+            knot_app.update();
+        }, this));
+        connect($("start_direction"), "onchange", bind(function() {
+            var select = $("start_direction");
+            this.start_direction = select.options[select.selectedIndex].value;
             knot_app.update();
         }, this));
 
@@ -550,7 +555,7 @@ KnotApp.prototype = {
     },
 
     update: function() {
-        var default_start_locs = this.controller.grid.getDefaultStartLocations(this.start_corner);
+        var default_start_locs = this.controller.grid.getDefaultStartLocations(this.start_corner,this.start_direction);
         var every_other = [];
         for(var i = 0; i < default_start_locs.length; i += 2) {
             every_other.push(default_start_locs[i]);
