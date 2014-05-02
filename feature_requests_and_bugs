@@ -1,0 +1,51 @@
+Bugs
+strand lengths don't update correctly unless you drag the grid
+
+Feature Requests
+
+half-cycle walkthrough like the original grid maker
+
+when bights are close together labels can get jumbled
+  - maybe some kind of font adjuster
+  - maybe label every other bight
+
+save settings to cookie
+ability to rotate grid 90 degrees
+auto rotate when wide grid
+
+
+// Some of these have already been done
+1.      Add a Checkbox to include/exclude knot data in printout. 
+or, just include it in the printout without a checkbox
+(Because I am editing crossings, I'm finding that I wish I could capture the knot data in my printout since I save them to PDF)
+
+2.      Chosen colors are not appearing in the data section of the printout
+
+3.      If the first half-cycle goes around the mandrel more than once, indicate how many times in the run list
+
+A1 [around 2x] to B7
+
+4.      In the instructions section (run list), when there is more than one strand, indicate the color assigned from the data section
+e.g., Strand 1 [green]
+
+5.      In the strand lengths section, convert strand length into feet and inches
+easy but also a low priority since it doesn't match what I'm seeing
+
+6.      In the strand lengths section, when there is more than one strand, indicate the color assigned from the data section
+
+7.      When consolidating overs and unders . . .
+
+a.      Have a space between consolidated unders and overs but NO space between consolidated overs and unders.
+
+e.g., 
+O1U1 O3U2 O2U2
+U3 O2U1 O2U2
+
+b.      When a pattern repeats, further consolidate it
+
+e.g.,
+O1U1 O1U1 O1U1 O2U1
+
+becomes
+
+O1U1 [3 times] O2U1
