@@ -101,7 +101,7 @@ KnotApp.prototype = {
             $("half_cycle").value = hcIndex+1;
             $("from_pin").innerHTML = controller.instructions.getPin(hc.getStartLoc());
             $("to_pin").innerHTML = controller.instructions.getPin(hc.getEndLoc());
-            $("run_list").innerHTML = controller.instructions.getRunList(hc.getRunList());
+            $("run_list").innerHTML = controller.instructions.getRunList(hcIndex);
             controller.setHalfCycle(hcIndex);
             controller.update();
         });
@@ -115,7 +115,7 @@ KnotApp.prototype = {
             $("half_cycle").value = hcIndex+1;
             $("from_pin").innerHTML = controller.instructions.getPin(hc.getStartLoc());
             $("to_pin").innerHTML = controller.instructions.getPin(hc.getEndLoc());
-            $("run_list").innerHTML = controller.instructions.getRunList(hc.getRunList());
+            $("run_list").innerHTML = controller.instructions.getRunList(hcIndex);
             controller.setHalfCycle(hcIndex);
             controller.update();
         });
@@ -128,7 +128,7 @@ KnotApp.prototype = {
             $("half_cycle").value = hcIndex+1;
             $("from_pin").innerHTML = controller.instructions.getPin(hc.getStartLoc());
             $("to_pin").innerHTML = controller.instructions.getPin(hc.getEndLoc());
-            $("run_list").innerHTML = controller.instructions.getRunList(hc.getRunList());
+            $("run_list").innerHTML = controller.instructions.getRunList(hcIndex);
             controller.setHalfCycle(hcIndex);
             controller.update();
         });
@@ -624,7 +624,7 @@ KnotApp.prototype = {
         $("half_cycle").value = numHalfCycles;
         $("from_pin").innerHTML = this.controller.instructions.getPin(hc.getStartLoc());
         $("to_pin").innerHTML = this.controller.instructions.getPin(hc.getEndLoc());
-        $("run_list").innerHTML = this.controller.instructions.getRunList(hc.getRunList());
+        $("run_list").innerHTML = this.controller.instructions.getRunList(numHalfCycles-1);
 
         //log(this.controller.instructions);
         //log(strand_lengths);

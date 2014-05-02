@@ -308,13 +308,14 @@ KnotInstructions.prototype = {
         }
         return pinmap.getPin(loc.row, loc.col);
     },
-    getRunList: function(run_list) {
+    getRunList: function(hc) {
+        var run_list = this.getHalfCycle(hc).getRunList();
         var str_out = "";
         var run_list_len = 0;
         if(this.do_short_hand) {
             var lastMove = '';
             var num = 0;
-            if(i == 0 && j == 0) {
+            if(hc == 0) {
                 var around = Math.floor(run_list.length/this.grid.cols);
                 if(around > 0) {
                     str_out += " around " + around + "x";
@@ -362,6 +363,7 @@ KnotInstructions.prototype = {
             pinmap = this.getPinMap();
         }
         var str_out = "";
+        var curHC = 0;
         for(var i = 0; i < this.instructions.length; i++) {
             var strand = this.instructions[i];
             var half_cycles = strand.getHalfCycles();
@@ -370,7 +372,6 @@ KnotInstructions.prototype = {
                 var hc = half_cycles[j];
                 var start_loc = hc.getStartLoc();
                 var end_loc = hc.getEndLoc();
-                var run_list = hc.getRunList();
 
                 if(j > 0) {
                     var prevEndLoc = half_cycles[j-1].getEndLoc();
@@ -380,10 +381,11 @@ KnotInstructions.prototype = {
                 }
 
                 str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).rpad(" ", 7) + " ";
-                str_out += this.getRunList(run_list);
+                str_out += this.getRunList(curHC);
                 str_out += ("to " + pinmap.getPin(end_loc.row, end_loc.col)).lpad(" ", 10) + "\n";
 //                console.log("Start - " + start_loc.row + ", " + start_loc.col + ": " + pinmap.getPin(start_loc.row, start_loc.col));
 //                console.log("End - " + end_loc.row + ", " + end_loc.col + ": " + pinmap.getPin(end_loc.row, end_loc.col));
+                curHC++;
             }
             str_out += "\n";
         }
