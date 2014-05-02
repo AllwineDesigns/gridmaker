@@ -65,6 +65,7 @@ KnotCanvas.prototype = {
     render: function() {
         this.calcVars();
         var grid = this.controller.getKnotGrid();
+        var pinGrid = this.controller.getPinKnotGrid();
 
         var ctx = this.element.getContext("2d");
         ctx.save();
@@ -188,7 +189,7 @@ KnotCanvas.prototype = {
             var instructions = this.controller.instructions;
             var pinmap;
             if(this.controller.do_letter_pins) {
-                pinmap = grid.getPinMap();
+                pinmap = pinGrid.getPinMap();
             } else {
                 pinmap = instructions.getPinMap();
             }

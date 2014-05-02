@@ -78,6 +78,52 @@ function KnotInstructions(grid, start_locs, labels, do_letter_pins, do_half_way,
 }
 
 KnotInstructions.prototype = {
+    getPartialGrid: function(num_half_cycles) {
+        var newgrid = this.grid.emptyCopy();
+        for(var i = 0; i < this.instructions.length; i++) {
+            for(var j = 0; j < this.instructions[i].half_cycles.length; j++) {
+                var hc = this.instructions[i].half_cycles[j];
+                var startLoc = hc.start;
+                var endLoc = hc.end;
+
+                var walker = new KnotGridWalker(this.grid,startLoc);
+                while(walker.next()) {
+                    var curLoc = walker.getLocation();
+                    if(walker.isOnBight()) {
+                        newgrid.putStrandPiece(curLoc, this.grid.grid[curLoc.row][curLoc.col]);
+                    } else {
+                        newgrid.putStrandPiece(curLoc);
+                    }
+                    if(curLoc.equals(endLoc)) {
+                        break;
+                    }
+                }
+
+                num_half_cycles--;
+
+                if(num_half_cycles == -1) {
+                    return newgrid;
+                }
+            }
+        }
+    },
+    getHalfCycle: function(hc) {
+        for(var i = 0; i < this.instructions.length; i++) {
+            if(hc >= this.instructions[i].half_cycles.length) {
+                hc -= this.instructions[i].half_cycles.length;
+            } else {
+                return this.instructions[i].half_cycles[hc];
+            }
+        }
+    },
+    getNumHalfCycles: function() {
+        var hcs = 0;
+        for(var i = 0; i < this.instructions.length; i++) {
+            hcs += this.instructions[i].half_cycles.length;
+        }
+
+        return hcs;
+    },
     init: function(grid, start_locs,labels, do_letter_pins,do_half_way, do_short_hand) {
         this.labels = labels;
         this.do_letter_pins = do_letter_pins;
@@ -253,6 +299,61 @@ KnotInstructions.prototype = {
 
         return map;
     },
+    getPin: function(loc) {
+        var pinmap;
+        if(this.do_letter_pins) {
+            pinmap = this.grid.getPinMap();
+        } else {
+            pinmap = this.getPinMap();
+        }
+        return pinmap.getPin(loc.row, loc.col);
+    },
+    getRunList: function(run_list) {
+        var str_out = "";
+        var run_list_len = 0;
+        if(this.do_short_hand) {
+            var lastMove = '';
+            var num = 0;
+            if(i == 0 && j == 0) {
+                var around = Math.floor(run_list.length/this.grid.cols);
+                if(around > 0) {
+                    str_out += " around " + around + "x";
+                }
+            }
+            for(var k = 0; k < run_list.length; k++) {
+                if(run_list[k] == ".") continue;
+
+                if(num > 0 && run_list[k] != lastMove) {
+                    var move = lastMove + num;
+                    if(lastMove == 'U') move += " ";
+                    str_out += move;
+                    run_list_len += move.length;
+                    num = 0;
+                    if(run_list_len > 32*3) {
+                        str_out += "\n             ";
+                        run_list_len = 0;
+                    }
+                }
+                lastMove = run_list[k];
+                num++;
+            }
+            if(num > 0) {
+                str_out += lastMove + num + " ";
+            }
+        } else {
+            for(var k = 0; k < run_list.length; k++) {
+                var move = run_list[k] + " ";
+                str_out += move;
+                run_list_len += move.length;
+                if(run_list_len > 32*3) {
+                    str_out += "\n             ";
+                    run_list_len = 0;
+                }
+            }
+        }
+        return str_out;
+    },
+
     toString: function() {
         var pinmap;
         if(this.do_letter_pins) {
@@ -279,47 +380,7 @@ KnotInstructions.prototype = {
                 }
 
                 str_out += "From " + pinmap.getPin(start_loc.row, start_loc.col).rpad(" ", 7) + " ";
-                var run_list_len = 0;
-                if(this.do_short_hand) {
-                    var lastMove = '';
-                    var num = 0;
-                    if(i == 0 && j == 0) {
-                        var around = Math.floor(run_list.length/this.grid.cols);
-                        if(around > 0) {
-                            str_out += " around " + around + "x";
-                        }
-                    }
-                    for(var k = 0; k < run_list.length; k++) {
-                        if(run_list[k] == ".") continue;
-
-                        if(num > 0 && run_list[k] != lastMove) {
-                            var move = lastMove + num;
-                            if(lastMove == 'U') move += " ";
-                            str_out += move;
-                            run_list_len += move.length;
-                            num = 0;
-                            if(run_list_len > 32*3) {
-                                str_out += "\n             ";
-                                run_list_len = 0;
-                            }
-                        }
-                        lastMove = run_list[k];
-                        num++;
-                    }
-                    if(num > 0) {
-                        str_out += lastMove + num + " ";
-                    }
-                } else {
-                    for(var k = 0; k < run_list.length; k++) {
-                        var move = run_list[k] + " ";
-                        str_out += move;
-                        run_list_len += move.length;
-                        if(run_list_len > 32*3) {
-                            str_out += "\n             ";
-                            run_list_len = 0;
-                        }
-                    }
-                }
+                str_out += this.getRunList(run_list);
                 str_out += ("to " + pinmap.getPin(end_loc.row, end_loc.col)).lpad(" ", 10) + "\n";
 //                console.log("Start - " + start_loc.row + ", " + start_loc.col + ": " + pinmap.getPin(start_loc.row, start_loc.col));
 //                console.log("End - " + end_loc.row + ", " + end_loc.col + ": " + pinmap.getPin(end_loc.row, end_loc.col));

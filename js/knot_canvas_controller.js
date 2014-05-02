@@ -761,6 +761,15 @@ KnotCanvasController.prototype = {
                     }
                 }
             }
+
+            if(this.partial_grid.grid[row][col] == KnotGridValues.SLASH &&
+                this.grid.coding[row][col] == CodingValues.O) {
+                colors.over = colors.under;
+            } else if(this.partial_grid.grid[row][col] == KnotGridValues.BACKSLASH &&
+                this.grid.coding[row][col] == CodingValues.U) {
+                colors.over = colors.under;
+            }
+
             return colors;
         } else {
             if(info) {
@@ -784,8 +793,20 @@ KnotCanvasController.prototype = {
         }
     },
 
-    getKnotGrid: function() {
+    getHalfCycle: function() {
+        return this.draw_hc || 0;
+    },
+    setHalfCycle: function(hc) {
+        this.draw_hc = hc;
+        this.partial_grid = this.instructions.getPartialGrid(this.draw_hc);
+    },
+
+    getPinKnotGrid: function() {
         return this.grid;
+    },
+
+    getKnotGrid: function() {
+        return this.partial_grid;
     },
 
     getLastCoords: function() {

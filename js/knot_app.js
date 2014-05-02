@@ -78,6 +78,7 @@ KnotApp.prototype = {
         this.controller.do_letter_pins = true;
 
         this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(this.start_corner,this.start_direction), this.controller.colors, true, false, false);
+        this.controller.setHalfCycle(this.controller.instructions.getNumHalfCycles()-1);
         this.do_every_other = false;
         this.do_half_way = false;
         this.do_short_hand = false;
@@ -89,6 +90,48 @@ KnotApp.prototype = {
             option.innerHTML = KnotCanvasBrushes[i].label;
             brushes_select.options[brushes_select.length] = option;
         }
+
+        connect($("next"), "onclick", function() {
+            var hcIndex = controller.getHalfCycle();
+            var numHalfCycles = controller.instructions.getNumHalfCycles();
+            hcIndex = (hcIndex+1)%numHalfCycles;
+
+            var hc = controller.instructions.getHalfCycle(hcIndex);
+
+            $("half_cycle").value = hcIndex+1;
+            $("from_pin").innerHTML = controller.instructions.getPin(hc.getStartLoc());
+            $("to_pin").innerHTML = controller.instructions.getPin(hc.getEndLoc());
+            $("run_list").innerHTML = controller.instructions.getRunList(hc.getRunList());
+            controller.setHalfCycle(hcIndex);
+            controller.update();
+        });
+        connect($("prev"), "onclick", function() {
+            var hcIndex = controller.getHalfCycle();
+            var numHalfCycles = controller.instructions.getNumHalfCycles();
+            hcIndex = (hcIndex-1+numHalfCycles)%numHalfCycles;
+
+            var hc = controller.instructions.getHalfCycle(hcIndex);
+
+            $("half_cycle").value = hcIndex+1;
+            $("from_pin").innerHTML = controller.instructions.getPin(hc.getStartLoc());
+            $("to_pin").innerHTML = controller.instructions.getPin(hc.getEndLoc());
+            $("run_list").innerHTML = controller.instructions.getRunList(hc.getRunList());
+            controller.setHalfCycle(hcIndex);
+            controller.update();
+        });
+        connect($("half_cycle"), "onchange", function() {
+            var numHalfCycles = controller.instructions.getNumHalfCycles();
+            var hcIndex = parseInt($("half_cycle").value) || (numHalfCycles-1);
+
+            var hc = controller.instructions.getHalfCycle(hcIndex);
+
+            $("half_cycle").value = hcIndex+1;
+            $("from_pin").innerHTML = controller.instructions.getPin(hc.getStartLoc());
+            $("to_pin").innerHTML = controller.instructions.getPin(hc.getEndLoc());
+            $("run_list").innerHTML = controller.instructions.getRunList(hc.getRunList());
+            controller.setHalfCycle(hcIndex);
+            controller.update();
+        });
 
         connect($("extend_strands"), "onclick", function() {
             controller.grid.extendStrands();
@@ -575,6 +618,14 @@ KnotApp.prototype = {
             strand_lengths = this.controller.strandLengths(default_start_locs);
         }
         this.controller.instructions = instructions;
+        var numHalfCycles = instructions.getNumHalfCycles();
+        this.controller.setHalfCycle(numHalfCycles-1);
+        var hc = this.controller.instructions.getHalfCycle(numHalfCycles-1);
+        $("half_cycle").value = numHalfCycles;
+        $("from_pin").innerHTML = this.controller.instructions.getPin(hc.getStartLoc());
+        $("to_pin").innerHTML = this.controller.instructions.getPin(hc.getEndLoc());
+        $("run_list").innerHTML = this.controller.instructions.getRunList(hc.getRunList());
+
         //log(this.controller.instructions);
         //log(strand_lengths);
 

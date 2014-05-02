@@ -1,6 +1,7 @@
 <html>
 
 <head>
+<link href="styles/knots.css" type="text/css" rel="stylesheet"/>
     <link href="styles/style.css" type="text/css" rel="stylesheet"/>
     <link href="styles/print.css" type="text/css" rel="stylesheet" media="print"/>
     <script language="Javascript" src="js/unFocus-History-p.js"></script>
@@ -74,6 +75,26 @@
     <button id="extend_strands">Extend Strands</button><button id="remove_strand" title="Once remove strand is clicked, click on a grid location to remove the strand on that location. Use the alt key to distinguish between two separate strands passing over the same location.">Remove Strand</button><br/>
     <button id="undo">Undo</button><button id="redo">Redo</button>
     <button id="copy">Copy</button><button id="paste">Paste</button><br/>
+</div>
+    <div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">Half cycle</div>
+            <div class="small_component"><img src="images/prev.png" id="prev"/><input type="text" id="half_cycle" size=2/><img src="images/next.png" id="next"/></div>
+        </div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">From</div>
+            <div class="small_component" id="from_pin"></div>
+        </div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">Run list</div>
+            <div class="small_component" id="run_list"></div>
+        </div>
+        <div style="float: left; margin: 5px">
+            <div class="bold">To</div>
+            <div class="small_component" id="to_pin"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
 </div>
     <div id="knot_canvas_border" style="padding: 10px">
     <canvas id="knot_canvas"></canvas><br/>
