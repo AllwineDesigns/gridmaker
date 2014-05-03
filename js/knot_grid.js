@@ -419,27 +419,29 @@ KnotGrid.prototype = {
 
         for(var r = startRow; rowCondition(r); r += rowIncr) {
             for(var c = startCol; colCondition(c); c += colIncr) {
-                if(grid.hasValue(r,c)) {
-                    var startDir = -1;
-                    var validDirs = ValidKnotDirections[grid.grid[r][c]];
-                    for(var i = 0; i < validDirs.length; i++) {
-                        if(validDirs[i] == preferDirection) {
-                            startDir = preferDirection;
-                            break;
+                for(var i = 0; i < 2; i++) { // do this twice for solo crossings
+                    if(grid.hasValue(r,c)) {
+                        var startDir = -1;
+                        var validDirs = ValidKnotDirections[grid.grid[r][c]];
+                        for(var i = 0; i < validDirs.length; i++) {
+                            if(validDirs[i] == preferDirection) {
+                                startDir = preferDirection;
+                                break;
+                            }
                         }
+                        if(startDir == -1) {
+                            startDir = getDefaultKnotDirection(grid.grid[r][c]);
+                        }
+                        var loc = new KnotLocation(r,c, startDir);
+                        if(grid.isLoop(loc)) {
+                            var bights = grid.findBights(loc);
+                            start_locs.push(bights[0]);
+                        } else {
+                            var ends = grid.findEnds(loc)
+                            start_locs.push(ends[0]);
+                        }
+                        grid.removeStrand(loc);
                     }
-                    if(startDir == -1) {
-                        startDir = getDefaultKnotDirection(grid.grid[r][c]);
-                    }
-                    var loc = new KnotLocation(r,c, startDir);
-                    if(grid.isLoop(loc)) {
-                        var bights = grid.findBights(loc);
-                        start_locs.push(bights[0]);
-                    } else {
-                        var ends = grid.findEnds(loc)
-                        start_locs.push(ends[0]);
-                    }
-                    grid.removeStrand(loc);
                 }
             }
         }

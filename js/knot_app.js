@@ -201,7 +201,7 @@ KnotApp.prototype = {
         });
         connect($("clear_grid"), "onclick", function() {
             controller.grid.clear();
-            controller.canvas.render();
+            knot_app.update();
         });
 
         connect($("undo"), "onclick", function(e) {
@@ -619,12 +619,20 @@ KnotApp.prototype = {
         }
         this.controller.instructions = instructions;
         var numHalfCycles = instructions.getNumHalfCycles();
-        this.controller.setHalfCycle(numHalfCycles-1);
-        var hc = this.controller.instructions.getHalfCycle(numHalfCycles-1);
-        $("half_cycle").value = numHalfCycles;
-        $("from_pin").innerHTML = this.controller.instructions.getPin(hc.getStartLoc());
-        $("to_pin").innerHTML = this.controller.instructions.getPin(hc.getEndLoc());
-        $("run_list").innerHTML = this.controller.instructions.getRunList(numHalfCycles-1);
+        if(numHalfCycles > 0) {
+            this.controller.setHalfCycle(numHalfCycles-1);
+            var hc = this.controller.instructions.getHalfCycle(numHalfCycles-1);
+            $("half_cycle").value = numHalfCycles;
+            $("from_pin").innerHTML = this.controller.instructions.getPin(hc.getStartLoc());
+            $("to_pin").innerHTML = this.controller.instructions.getPin(hc.getEndLoc());
+            $("run_list").innerHTML = this.controller.instructions.getRunList(numHalfCycles-1);
+        } else {
+            this.controller.setHalfCycle(0);
+            $("half_cycle").value = numHalfCycles;
+            $("from_pin").innerHTML = "";
+            $("to_pin").innerHTML = "";
+            $("run_list").innerHTML = "";
+        }
 
         //log(this.controller.instructions);
         //log(strand_lengths);

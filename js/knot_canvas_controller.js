@@ -798,7 +798,11 @@ KnotCanvasController.prototype = {
     },
     setHalfCycle: function(hc) {
         this.draw_hc = hc;
-        this.partial_grid = this.instructions.getPartialGrid(this.draw_hc);
+        if(!this.instructions || this.instructions.getNumHalfCycles() == 0) {
+            this.partial_grid = this.grid;
+        } else {
+            this.partial_grid = this.instructions.getPartialGrid(this.draw_hc);
+        }
     },
 
     getPinKnotGrid: function() {
@@ -985,7 +989,6 @@ KnotCanvasController.prototype = {
                         break;
                 }
                 this.grid.updateKnotInfo();
-                this.canvas.render();
                 knot_app.update();
             }
         }
