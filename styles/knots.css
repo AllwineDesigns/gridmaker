@@ -58,7 +58,7 @@ body, table tr th {
     padding: 5px;
     border: 1px solid #999999;
     line-height: 25px;
-    height: 25px;
+    min-height: 25px;
 
 }
 
