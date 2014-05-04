@@ -1,7 +1,9 @@
 Bugs
-strand lengths don't update correctly unless you drag the grid
+strand lengths and dimensions don't update correctly unless you drag the grid
 
 Feature Requests
+
+implement doubling/tripling a knot
 
 when bights are close together labels can get jumbled
   - maybe some kind of font adjuster
@@ -13,7 +15,6 @@ ability to rotate grid 90 degrees
 auto rotate when wide grid
 
 
-// Some of these have already been done
 7.      When consolidating overs and unders . . .
 
 b.      When a pattern repeats, further consolidate it

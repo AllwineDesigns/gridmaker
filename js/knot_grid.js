@@ -900,6 +900,7 @@ KnotGrid.prototype = {
 
     },
 
+
     standardGrid: function(opts) {
         for(var r = 0; r < this.rows; r++) {
             for(var c = 0; c < this.cols; c++) {
@@ -1022,6 +1023,41 @@ KnotGrid.prototype = {
             }
 
         }
+        this.extendStrands();
+        this.setInvalid();
+    },
+
+    hansenGrid: function(opts) {
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.grid[r][c] = KnotGridValues.EMPTY;
+            }
+        }
+
+        var shift_bottom = 2*opts.shift_bottom_bights;
+        for(var c = 0; c < this.cols; c += 6) {
+            this.grid[0][c] = KnotGridValues.UPPER_BIGHT;
+            this.grid[2][c] = KnotGridValues.UPPER_BIGHT;
+            if(c+3 < this.cols) {
+                this.grid[1][c+3] = KnotGridValues.UPPER_BIGHT;
+            }
+
+            r = this.rows-1;
+            this.grid[r][(c+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+            this.grid[r-2][(c+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+            if(c+3 < this.cols) {
+                this.grid[r-1][(c+3+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+            }
+
+            if(c+1 < this.cols) {
+                this.grid[r][(c+1+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+                this.grid[r-2][(c+1+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+            }
+            if(c+4 < this.cols) {
+                this.grid[r-1][(c+4+shift_bottom)%this.cols] = KnotGridValues.LOWER_BIGHT;
+            }
+        }
+
         this.extendStrands();
         this.setInvalid();
     },

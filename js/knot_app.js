@@ -503,6 +503,17 @@ KnotApp.prototype = {
             SendUnityMessage("KnotGridWebHooks", "SetRelaxedSphere", "");
         });
         */
+        connect($("hansen_grid"), "onclick", function(e) {
+            controller.saveUndo();
+            controller.grid.grid_func = controller.grid.hansenGrid;
+            controller.grid.grid_opts = {
+                shift_bottom_bights: parseInt($("hansen_shift_bottom_bights").value)
+            };
+            controller.gridString = "Hansen Grid - ";
+            controller.gridString += "Shift Bottom Bights: " + controller.grid.grid_opts.shift_bottom_bights;
+            controller.grid.updateGrid();
+            knot_app.update();
+        });
         connect($("pineapple_grid"), "onclick", function(e) {
             controller.saveUndo();
             controller.grid.grid_func = controller.grid.pineappleGrid;
