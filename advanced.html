@@ -45,7 +45,7 @@
 <h3>If you like this tool, please consider liking my Facebook page: <a href="https://www.facebook.com/freakinsweetknots">https://www.facebook.com/freakinsweetknots</a></h3>
     <button id="stretch">Stretch</button><button id="resize">Resize</button><br/>
     <button id="rowcoding">Row Coding</button><button id="colcoding">Column Coding</button><input type="text" value="OU" id="coding"/><br/>
-    <button id="tilecoding">Tile Coding</button><input type="text" value="4" id="tile_size"/><input type="text" value="O" id="tile_topcoding"/><input type="text" value="U" id="tile_botcoding"/><br/>
+    <button id="tilecoding">Tile Coding</button><input type="text" value="4" id="tile_size"/><input type="text" value="O" id="tile_topcoding"/><input type="text" value="U" id="tile_botcoding"/><input type="text" value="0" id="tile_row_offset"/><input type="text" value="0" id="tile_col_offset"/><br/>
     <button id="gauchocoding">Locked Gaucho Coding</button><input type="text" value="2" id="gaucho_size"/><input type="text" value="O" id="gaucho_topcoding"/><br/>
     <button id="dogbonecoding">Dog Bone Coding</button> Rows <input type="text" value="7" id="dog_bone_coding_rows"/> Top Coding <input type="text" value="OU" id="dog_bone_top_coding"/> Middle Coding <input type="text" value="OOUU" id="dog_bone_mid_coding"/> Bottom Coding <input type="text" value="UO" id="dog_bone_bot_coding"/><br/>
     Colors <input type="text" value="peru" id="colors" size="50"/><br/>
@@ -62,7 +62,7 @@
     <br/>
     <span title="When resizing the grid (and autofill is on), automatically fill the grid using the given option.">Autofill Grid Options:</span><br/>
     <input type="checkbox" id="autofill" checked="1"/> Autofill Grid<br/>
-    <button id="standard_grid">Standard Grid</button><button id="mat_grid">Mat Grid</button><br/>
+    <button id="standard_grid">Standard Grid</button><button id="mat_grid">Mat Grid</button><button id="braid_grid">Round Braid Grid</button><br/>
     <button id="pineapple_plant_hanger_grid">Pineapple Plant Hanger Grid</button><button id="bottom_pineapple_grid">Bottom Pineapple Grid</button><button id="pineapple_grid">Pineapple Grid</button> Nested Bights <input type="text" value="3" id="nested_bights"/> Shift Bottom Bights <input type="text" value="0" id="shift_bottom_bights"/><br/>
     <button id="hansen_grid">Hansen Grid</button> Shift Bottom Bights <input type="text" value="0" id="hansen_shift_bottom_bights"/><br/>
     <button id="dog_bone_grid">Dog Bone Grid</button> Nested Bights <input type="text" value="2" id="dog_bone_nested_bights"/> Shift Bottom Bights <input type="text" value="0" id="dog_bone_shift_bottom_bights"/> Rows <input type="text" value="7" id="dog_bone_rows"/><br/>
@@ -73,7 +73,7 @@
     <button id="set_empty">.</button><button id="set_upper_bight">^</button><button id="set_lower_bight">v</button><button id="set_slash">/</button><button id="set_backslash">\</button><button id="set_x">x</button><button id="set_left_bight">&lt;</button><button id="set_right_bight">&gt;</button><button id="set_horizontal_bights">K</button><button id="set_vertical_bights">Y</button><br/>
     <select id="brushes"></select><button id="set_brush">Set Brush</button><br/>
     <button id="remove_nonloops">Remove Non-Loop Strands</button><button id="clear_grid">Clear Grid</button><br/>
-    <button id="extend_strands">Extend Strands</button><button id="remove_strand" title="Once remove strand is clicked, click on a grid location to remove the strand on that location. Use the alt key to distinguish between two separate strands passing over the same location.">Remove Strand</button><br/>
+    <button id="extend_strands">Extend Strands</button><button id="remove_strand" title="Once remove strand is clicked, click on a grid location to remove the strand on that location. Use the alt key to distinguish between two separate strands passing over the same location.">Remove Strand</button><button id="toggle_strand_coding" title="toggle strand">Toggle Strand Coding</button><br/>
     <button id="undo">Undo</button><button id="redo">Redo</button>
     <button id="copy">Copy</button><button id="paste">Paste</button><br/>
 </div>

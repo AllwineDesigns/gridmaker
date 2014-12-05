@@ -3,6 +3,18 @@ strand lengths and dimensions don't update correctly unless you drag the grid
 
 Feature Requests
 
+Ruler feature for measuring parts of the knot
+
+Improve performance. One work around could be to show lower res image scaled
+up.
+
+option to turn off resize/stretch so clicking crossings near the the edges and
+corner don't inadverdently resize the grid.
+
+setup a checkered coding which is just tile coding with automatic locked coding
+    - N-1 O for top
+    - N-1 O for bottom when odd parts, N-1 U for bottom when even parts
+
 implement doubling/tripling a knot
 
 when bights are close together labels can get jumbled

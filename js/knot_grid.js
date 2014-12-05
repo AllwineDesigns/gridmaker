@@ -888,13 +888,17 @@ KnotGrid.prototype = {
         var topcoding = opts.topcoding;
         var botcoding = opts.botcoding;
         for(var c = 0; c < this.cols; c++) {
-            for(var i = 0; i < topcoding.length; i++) {
-                var r = 1+i;
-                this.coding[r][c] = topcoding[i];
+            if(topcoding.length > 0) {
+                for(var i = 0; i < topcoding.length; i++) {
+                    var r = 1+i;
+                    this.coding[r][c] = topcoding[i];
+                }
             }
-            for(var i = 0; i < botcoding.length; i++) {
-                var r = this.rows-1-botcoding.length+i;
-                this.coding[r][c] = botcoding[i];
+            if(botcoding.length > 0) {
+                for(var i = 0; i < botcoding.length; i++) {
+                    var r = this.rows-1-botcoding.length+i;
+                    this.coding[r][c] = botcoding[i];
+                }
             }
         }
 
@@ -915,6 +919,15 @@ KnotGrid.prototype = {
                 } else {
                     this.grid[r][c] = KnotGridValues.X;
                 }
+            }
+        }
+        this.setInvalid();
+    },
+
+    crossingGrid: function(opts) {
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.grid[r][c] = KnotGridValues.X;
             }
         }
         this.setInvalid();
@@ -1112,6 +1125,36 @@ KnotGrid.prototype = {
         }
         this.extendStrands();
         this.setInvalid();
+    },
+
+    toggleStrandCoding: function(loc) {
+        var visited = new Array();
+        for(var i = 0; i < this.rows; i++) {
+            visited[i] = new Array();
+        }
+
+        var walker;
+
+        if(this.isLoop(loc)) {
+            walker = new KnotGridWalker(this, loc);
+        } else {
+            var ends = this.findEnds(loc);
+            walker = new KnotGridWalker(this, ends[0]);
+        }
+        while(walker.next()) {
+            var cur_loc = walker.getLocation();
+            if(!visited[cur_loc.row][cur_loc.col]) {
+                visited[cur_loc.row][cur_loc.col] = true;
+                switch(this.coding[cur_loc.row][cur_loc.col]) {
+                    case CodingValues.O:
+                        this.coding[cur_loc.row][cur_loc.col] = CodingValues.U;
+                        break;
+                    case CodingValues.U:
+                        this.coding[cur_loc.row][cur_loc.col] = CodingValues.O;
+                        break;
+                }
+            }
+        }
     },
 
     removeStrand: function(loc) {

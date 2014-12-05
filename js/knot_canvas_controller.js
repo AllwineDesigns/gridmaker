@@ -19,7 +19,8 @@ KnotCanvasClickMode = {
     SET_BACKSLASH: "set_backslash",
     SET_X: "set_x",
     SET_BRUSH: "set_brush",
-    REMOVE_STRAND: "remove_strand"
+    REMOVE_STRAND: "remove_strand",
+    TOGGLE_STRAND_CODING: "toggle_strand_coding"
 };
 
 KnotCanvasBrushes = [
@@ -705,7 +706,8 @@ KnotCanvasController.prototype = {
                 } else {
                     cursor_info = cursor_info[0];
                 }
-                if(this.click_mode == KnotCanvasClickMode.REMOVE_STRAND) {
+                if(this.click_mode == KnotCanvasClickMode.REMOVE_STRAND ||
+                    this.click_mode == KnotCanvasClickMode.TOGGLE_STRAND_CODING) {
                     select_strand = true;
                 }
             }
@@ -959,6 +961,18 @@ KnotCanvasController.prototype = {
                         }
                         var loc = new KnotLocation(row, col, cursor_info.dir);
                         this.grid.removeStrand(loc);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        break;
+                    case KnotCanvasClickMode.TOGGLE_STRAND_CODING:
+                        var cursor_info = this.grid.knot_info[row][col];
+                        if(cursor_info.length > 1) {
+                            cursor_info = cursor_info[this.alt_down ? 0 : 1];
+                        } else {
+                            cursor_info = cursor_info[0];
+                        }
+                        var loc = new KnotLocation(row, col, cursor_info.dir);
+                        this.grid.toggleStrandCoding(loc);
                         e.preventDefault();
                         e.stopPropagation();
                         break;

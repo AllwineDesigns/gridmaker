@@ -252,6 +252,9 @@ KnotApp.prototype = {
         connect($("remove_strand"), "onclick", function() {
             controller.setClickMode(KnotCanvasClickMode.REMOVE_STRAND);
         });
+        connect($("toggle_strand_coding"), "onclick", function() {
+            controller.setClickMode(KnotCanvasClickMode.TOGGLE_STRAND_CODING);
+        });
 
         connect($("create_image"), "onclick", function() {
             //log(canvas.element.toDataURL("image/jpeg"));
@@ -404,6 +407,8 @@ KnotApp.prototype = {
                 size: parseInt($("tile_size").value),
                 topcoding: $("tile_topcoding").value,
                 botcoding: $("tile_botcoding").value,
+                rowoffset: parseInt($("tile_row_offset").value),
+                coloffset: parseInt($("tile_col_offset").value)
             };
             controller.codingString = "Tile Coding - ";
             controller.codingString += controller.grid.coding_opts.size + ", ";
@@ -468,6 +473,16 @@ KnotApp.prototype = {
             controller.grid.grid_opts = 0;
 
             controller.gridString = "Standard Grid";
+
+            controller.grid.updateGrid();
+            knot_app.update();
+        });
+        connect($("braid_grid"), "onclick", function(e) {
+            controller.saveUndo();
+            controller.grid.grid_func = controller.grid.crossingGrid;
+            controller.grid.grid_opts = 0;
+
+            controller.gridString = "Braid Grid";
 
             controller.grid.updateGrid();
             knot_app.update();
