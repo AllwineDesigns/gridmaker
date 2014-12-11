@@ -210,6 +210,9 @@ KnotApp.prototype = {
         connect($("redo"), "onclick", function(e) {
             controller.redo();
         });
+        //connect($("toggle_all_coding"), "onclick", function() {
+        //    controller.grid.toggleStrandCoding();
+        //});
         connect($("toggle_coding"), "onclick", function() {
             controller.setClickMode(KnotCanvasClickMode.TOGGLE_CODING);
         });

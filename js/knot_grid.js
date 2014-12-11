@@ -237,6 +237,24 @@ KnotGrid.prototype = {
         }
     },
 
+    toggleAllCoding: function() {
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                this.coding[r][c] = !this.coding[r][c];
+            }
+        }
+    },
+
+/*
+    toggleStrandCoding: function(loc) {
+        var walker = new KnotGridWalker(this, loc);
+        while(walker.next()) {
+            var loc = walker.getLocation();
+            this.coding[loc.row][loc.col] = !this.coding[loc.row][loc.col];
+        }
+    },
+    */
+
     updateKnotInfo: function() {
         //log("hello");
         this.knot_info = [];
