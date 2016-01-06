@@ -11,6 +11,7 @@ function KnotCanvas(id) {
 KnotCanvas.prototype = {
     init: function(id) {
         this.element = $(id);
+        this.display_scale = .3;
     },
 
     setController: function(controller) {
@@ -19,6 +20,20 @@ KnotCanvas.prototype = {
 
     getPosition: function() {
         return getElementPosition(this.element);
+    },
+
+    setDisplayScale: function(scale) {
+        this.display_scale = scale;
+        this.element.style.width = this.element.width*scale;
+        this.element.style.height = this.element.height*scale;
+    },
+
+    getDisplaySize: function() {
+        var dim = getElementDimensions(this.element);
+        return {
+            width: dim.w,
+            height: dim.h
+        };
     },
 
     getSize: function() {
@@ -30,16 +45,21 @@ KnotCanvas.prototype = {
 
     getRelativeCoordinates: function(page_coords) {
         var pos = this.getPosition();
+        var display_size = this.getDisplaySize();
+        var size = this.getSize();
 
         return {
-            x: page_coords.x-pos.x,
-            y: page_coords.y-pos.y
+            x: (page_coords.x-pos.x)*(size.width/display_size.width),
+            y: (page_coords.y-pos.y)*(size.height/display_size.height)
         };
     },
 
     resize: function(width, height) {
         this.element.width = width;
         this.element.height = height;
+
+        this.element.style.width = width*this.display_scale;
+        this.element.style.height = height*this.display_scale;
     },
 
     quickrender: function() {
@@ -499,11 +519,12 @@ KnotCanvas.prototype = {
         this.vars.halfcol = this.controller.grid_spacing.col*.5;
         this.vars.halfrow = this.controller.grid_spacing.row*.5;
 //        this.vars.t = this.controller.shadow_ratio;
-        this.vars.d = this.controller.shadow_width/(2*this.vars.costheta);
-        this.vars.e = this.vars.d/this.vars.tantheta;
 
         this.vars.f = 1/(2*this.vars.costheta);
         this.vars.g = this.vars.f/this.vars.tantheta;
+
+        this.vars.d = this.controller.shadow_width/(2*this.vars.costheta);
+        this.vars.e = this.vars.d/this.vars.tantheta;
     },
 
     drawSlash: function(ctx, r, c, colors) {
@@ -609,12 +630,29 @@ KnotCanvas.prototype = {
         ctx.closePath();
         ctx.fill();
 
-        var grd=ctx.createLinearGradient(x6,y6,x7,y7);
+        var gradperpx = x6-x5;
+        var gradperpy = y6-y5;
+
+        var gradperp_mag = Math.sqrt(gradperpx*gradperpx+gradperpy*gradperpy);
+
+        var gx = -gradperpy/gradperp_mag;
+        var gy = gradperpx/gradperp_mag;
+
+        var shadowdx = x6-x7;
+        var shadowdy = y6-y7;
+        var shadowd = Math.sqrt(shadowdx*shadowdx+shadowdy*shadowdy);
+
+        var gradx1 = x6+gx*shadowd*Math.sin(Math.PI-2*this.vars.theta);
+        var grady1 = y6+gy*shadowd*Math.sin(Math.PI-2*this.vars.theta);
+
+//        var grd=ctx.createLinearGradient(x6,y6,x7,y7);
+        var grd=ctx.createLinearGradient(x6,y6,gradx1,grady1);
         grd.addColorStop(0,colors.under);
         grd.addColorStop(.25,colors.shadow);
         grd.addColorStop(.75,colors.shadow);
         grd.addColorStop(1,colors.under);
 
+//        ctx.fillStyle = "black";
 //        ctx.fillStyle = colors.shadow;
         ctx.fillStyle = grd;
         ctx.beginPath();
@@ -695,7 +733,24 @@ KnotCanvas.prototype = {
         ctx.closePath();
         ctx.fill();
 
-        var grd=ctx.createLinearGradient(x6,y6,x7,y7);
+        var gradperpx = x6-x5;
+        var gradperpy = y6-y5;
+
+        var gradperp_mag = Math.sqrt(gradperpx*gradperpx+gradperpy*gradperpy);
+
+        var gx = -gradperpy/gradperp_mag;
+        var gy = gradperpx/gradperp_mag;
+
+        var shadowdx = x6-x7;
+        var shadowdy = y6-y7;
+        var shadowd = Math.sqrt(shadowdx*shadowdx+shadowdy*shadowdy);
+
+        var gradx1 = x6+gx*shadowd*Math.sin(Math.PI-2*this.vars.theta);
+        var grady1 = y6+gy*shadowd*Math.sin(Math.PI-2*this.vars.theta);
+
+//        var grd=ctx.createLinearGradient(x6,y6,x7,y7);
+        var grd=ctx.createLinearGradient(x6,y6,gradx1,grady1);
+
         grd.addColorStop(0,colors.under);
         grd.addColorStop(.25,colors.shadow);
         grd.addColorStop(.75,colors.shadow);

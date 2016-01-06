@@ -146,6 +146,14 @@ KnotInstructions.prototype = {
                 newgrid.putStrandPiece(loc, grid.grid[loc.row][loc.col]);
             } else {
                 newgrid.putStrandPiece(walker.getLocation());
+                var loc = walker.getLocation();
+                if(newgrid.isCrossing(loc.row, loc.col)) {
+                    if(newgrid.isOver(loc)) {
+                        hc.appendToRunList("O");
+                    } else {
+                        hc.appendToRunList("U");
+                    }
+                }
             }
 
             while(walker.next()) {

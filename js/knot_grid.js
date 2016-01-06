@@ -141,6 +141,14 @@ KnotGrid.prototype = {
             }
         }
 
+        new_grid.options = {};
+
+        new_grid.options.corner = this.options.corner;
+        new_grid.options.prefer_dir = this.options.prefer_dir;
+        new_grid.options.always_prefer_dir = this.options.always_prefer_dir;
+        new_grid.options.dir_preference = this.options.dir_preference;
+        new_grid.options.every_other = this.options.every_other;
+
         return new_grid;
     },
     emptyCopy: function() {
@@ -166,6 +174,14 @@ KnotGrid.prototype = {
         return new_grid;
     },
     init: function(rows, cols, no_knot_info) {
+        this.options = {
+            corner: StartCorner.TOP_LEFT,
+            prefer_dir: KnotDirection.DOWN_RIGHT,
+            always_prefer_dir: true,
+            dir_preference: KnotDirection.DOWN_RIGHT,
+            every_other: false
+        };
+
         //log("in init: " + rows + ", " + cols);
         this.rows = rows;
         this.cols = cols;
@@ -265,32 +281,22 @@ KnotGrid.prototype = {
         var grid = this.copy(1);
         var strand = 0;
 
-        for(var r = 0; r < grid.rows; r++) {
-            for(var c = 0; c < grid.cols; c++) {
-                for(var s = 0; s < 2; s++) {
-                    if(grid.hasValue(r,c)) {
-                        var dir = getDefaultKnotDirection(grid.grid[r][c]);
-                        var start_loc = new KnotLocation(r, c, dir);
-                        if(!grid.isLoop(start_loc)) {
-                            var ends = grid.findEnds(start_loc);
-                            start_loc = ends[0];
-                        }
-                        var walker = new KnotGridWalker(grid, start_loc);
-                        while(walker.next()) {
-                            var loc = walker.getLocation();
-                            if(!this.knot_info[loc.row][loc.col]) {
-                                this.knot_info[loc.row][loc.col] = [];
-                            }
-                            this.knot_info[loc.row][loc.col].push({
-                                strand: strand,
-                                dir: loc.dir
-                            });
-                        }
-                        grid.removeStrand(start_loc);
-                        strand++;
-                    }
+        var start_locs = grid.getDefaultStartLocations(this.options.corner, this.options.prefer_dir, this.options.always_prefer_dir, this.options.dir_preference, false);
+        for(var i = 0; i < start_locs.length; i++) {
+            var start_loc = start_locs[i];
+            var walker = new KnotGridWalker(grid, start_loc);
+            while(walker.next()) {
+                var loc = walker.getLocation();
+                if(!this.knot_info[loc.row][loc.col]) {
+                    this.knot_info[loc.row][loc.col] = [];
                 }
+                this.knot_info[loc.row][loc.col].push({
+                    strand: strand,
+                    dir: loc.dir
+                });
             }
+            grid.removeStrand(start_loc);
+            strand++;
         }
     },
 
@@ -370,12 +376,37 @@ KnotGrid.prototype = {
         return true;
     },
 
-    getDefaultStartLocations: function(corner,prefer_dir) {
-        if(!corner) {
-            corner = StartCorner.TOP_LEFT;
+    isEmpty: function() {
+        for(var r = 0; r < this.rows; r++) {
+            for(var c = 0; c < this.cols; c++) {
+                if(this.grid[r][c] != KnotGridValues.EMPTY && this.grid[r][c] != KnotGridValues.INVALID) {
+                    return false;
+                }
+            }
         }
+
+        return true;
+    },
+
+    getDefaultStartLocations: function(corner,prefer_dir, always_prefer_dir, dir_preference, every_other) {
+        if(typeof corner === 'undefined') {
+            corner = this.options.corner;
+        }
+        if(typeof prefer_dir === 'undefined') {
+            prefer_dir = this.options.prefer_dir;
+        }
+        if(typeof always_prefer_dir === 'undefined') {
+            always_prefer_dir = this.options.always_prefer_dir;
+        }
+        if(typeof dir_preference === 'undefined') {
+            dir_preference = this.options.dir_preference;
+        }
+        if(typeof every_other === 'undefined') {
+            every_other = this.options.every_other;
+        }
+
         var start_locs = [];
-        var grid = this.copy();
+        var grid = this.copy(1);
 
         var preferDirection;
         var startRow;
@@ -435,33 +466,58 @@ KnotGrid.prototype = {
                 break;
         }
 
-        for(var r = startRow; rowCondition(r); r += rowIncr) {
-            for(var c = startCol; colCondition(c); c += colIncr) {
-                for(var i = 0; i < 2; i++) { // do this twice for solo crossings
-                    if(grid.hasValue(r,c)) {
-                        var startDir = -1;
-                        var validDirs = ValidKnotDirections[grid.grid[r][c]];
-                        for(var i = 0; i < validDirs.length; i++) {
-                            if(validDirs[i] == preferDirection) {
-                                startDir = preferDirection;
-                                break;
+        var first_time_through = true;
+        while(!grid.isEmpty()) {
+            for(var r = startRow; rowCondition(r); r += rowIncr) {
+                for(var c = startCol; colCondition(c); c += colIncr) {
+                    for(var i = 0; i < 2; i++) { // do this twice for solo crossings
+                        if(grid.hasValue(r,c)) {
+                            var startDir = -1;
+                            var validDirs = ValidKnotDirections[grid.grid[r][c]];
+                            for(var i = 0; i < validDirs.length; i++) {
+                                if(always_prefer_dir) {
+                                    if(validDirs[i] == dir_preference) {
+                                        startDir = dir_preference;
+                                        break;
+                                    }
+                                } else {
+                                    if(validDirs[i] == preferDirection) {
+                                        startDir = preferDirection;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(startDir == -1) {
+                                startDir = getDefaultKnotDirection(grid.grid[r][c]);
+                            }
+                            if(!always_prefer_dir || (always_prefer_dir && dir_preference == startDir) || !first_time_through) {
+                                var loc = new KnotLocation(r,c, startDir);
+                                if(grid.isLoop(loc)) {
+                                    var bights = grid.findBights(loc);
+                                    start_locs.push(bights[0]);
+                                } else {
+                                    var ends = grid.findEnds(loc)
+                                    start_locs.push(ends[0]);
+                                }
+                                grid.removeStrand(loc);
                             }
                         }
-                        if(startDir == -1) {
-                            startDir = getDefaultKnotDirection(grid.grid[r][c]);
-                        }
-                        var loc = new KnotLocation(r,c, startDir);
-                        if(grid.isLoop(loc)) {
-                            var bights = grid.findBights(loc);
-                            start_locs.push(bights[0]);
-                        } else {
-                            var ends = grid.findEnds(loc)
-                            start_locs.push(ends[0]);
-                        }
-                        grid.removeStrand(loc);
                     }
                 }
             }
+            first_time_through = false;
+        }
+
+        if(every_other) {
+            var eo = [];
+
+            for(var i = 0; i < start_locs.length; i+=2) {
+                eo.push(start_locs[i]);
+            }
+            for(var i = 1; i < start_locs.length; i+=2) {
+                eo.push(start_locs[i]);
+            }
+            return eo;
         }
 
         return start_locs;

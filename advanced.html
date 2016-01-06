@@ -44,6 +44,7 @@
 <div class="hide_when_printing">
 <h3>If you like this tool, please consider liking my Facebook page: <a href="https://www.facebook.com/freakinsweetknots">https://www.facebook.com/freakinsweetknots</a></h3>
 <h3>Or purchasing something from my online store: <a href="http://freakinsweetapps.com/shop">http://freakinsweetapps.com/shop</a></h3>
+
 <p>
 Recommend browsers are Chrome or Firefox. IE is not supported.
 </p>
@@ -60,7 +61,6 @@ In <a href="http://freakinsweetapps.com/knots/knotgrid/Knot_Sizing_V141106.pdf">
 knot using the Grid Maker (both in terms of sizing the physical knot, and using
 the grid maker to set it up).
 </p>
-
     <button id="stretch">Stretch</button><button id="resize">Resize</button><br/>
     <button id="rowcoding">Row Coding</button><button id="colcoding">Column Coding</button><input type="text" value="OU" id="coding"/><br/>
     <button id="tilecoding">Tile Coding</button><input type="text" value="4" id="tile_size"/><input type="text" value="O" id="tile_topcoding"/><input type="text" value="U" id="tile_botcoding"/><input type="text" value="0" id="tile_row_offset"/><input type="text" value="0" id="tile_col_offset"/><br/>
@@ -71,6 +71,7 @@ the grid maker to set it up).
     Strand Width: <input type="text" id="strand_width_inches" style="width: 100px"/> inches <input type="text" id="strand_width_cm"/> cm<br/>
     Strand Gap Size: <input type="text" id="strand_gap_inches" style="width: 100px"/> inches <input type="text" id="strand_gap_cm"/> cm<br/>
     DPI: <input type="text" id="dpi" style="width: 100px"/><br/>
+    Display Scale: <input type="text" id="display_scale" style="width: 100px"/><br/>
     Parts: <input type="text" id="parts_input" value="13" style="width: 100px"/><br/>
     Bights: <input type="text" id="bights_input" value="9" style="width: 100px"/><br/><br/>
 
@@ -142,6 +143,12 @@ the grid maker to set it up).
     <input type="checkbox" id="do_short_hand"> Consolidate overs and unders<br/>
     <input type="checkbox" id="do_half_way"> Do half way<br/>
     <input type="checkbox" id="do_letter_pins" checked="checked"> Label pins with letters<br/>
+    <input type="checkbox" id="prefer_direction" checked="checked"> Prefer <select id="dir_preference">
+        <option value="DOWN_RIGHT">Down Right</option>
+        <option value="DOWN_LEFT">Down Left</option>
+        <option value="UP_RIGHT">Up Right</option>
+        <option value="UP_LEFT">Up Left</option>
+    </select> Strands<br/>
     Start Corner: <select id="start_corner">
         <option value="1">Top Left</option>
         <option value="2">Top Right</option>

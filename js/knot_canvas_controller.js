@@ -577,7 +577,7 @@ KnotCanvasController.prototype = {
 
         this.autofill = true;
 
-        this.DPI = 90;
+        this.DPI = 300;
        
 //        this.strand_width = 1/8*this.DPI;
 //        log(this.strand_width);
@@ -587,7 +587,7 @@ KnotCanvasController.prototype = {
         this.strand_height = this.strand_width;
         this.strand_gap_size = 1/8*this.DPI;
 //        this.shadow_width = 20;
-        this.shadow_width = .045*this.DPI;
+        this.shadow_width = .05*this.DPI;
 
         this.grid_spacing = {
             row: (this.strand_width+this.strand_gap_size)*Math.sqrt(2)/2,
@@ -595,7 +595,7 @@ KnotCanvasController.prototype = {
         }
         this.padding = {
             x: 0,
-            y: 10
+            y: 10./90*this.DPI
         };
 
         this.last_coords = { x: 0, y: 0 };
@@ -615,10 +615,10 @@ KnotCanvasController.prototype = {
         this.strand_width = sw*this.DPI;
         this.strand_height = this.strand_width;
         this.strand_gap_size = sg*this.DPI;
-        this.shadow_width = .045*this.DPI;
+        this.shadow_width = this.strand_width*.2;
         this.padding = {
             x: 0,
-            y: 10/90*this.DPI
+            y: 10./90*this.DPI
         };
 
         this.grid_spacing = {
@@ -631,6 +631,7 @@ KnotCanvasController.prototype = {
     setStrandWidth: function(sw) {
         this.strand_width = sw;
         this.strand_height = this.strand_width;
+        this.shadow_width = this.strand_width*.2;
 
         this.grid_spacing = {
             row: (this.strand_width+this.strand_gap_size)*Math.sqrt(2)/2,
@@ -1125,8 +1126,8 @@ KnotCanvasController.prototype = {
             e.preventDefault();
             e.stopPropagation();
         } else {
-            if(Math.abs(size.width-coords.x) <= 5 &&
-                Math.abs(size.height-coords.y) <= 5) {
+            if(Math.abs(size.width-coords.x) <= 5/this.canvas.display_scale &&
+                Math.abs(size.height-coords.y) <= 5/this.canvas.display_scale) {
                 this.body.style.cursor = "nwse-resize";
                 this.resize_side = "se";
             } else if(Math.abs(size.width-coords.x) <= 5 &&

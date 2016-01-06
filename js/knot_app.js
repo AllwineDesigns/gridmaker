@@ -73,13 +73,25 @@ KnotApp.prototype = {
 
         //log(str);
 
+        var select = $("start_corner");
+        this.start_corner = parseInt(select.options[select.selectedIndex].value);
+
+        select = $("dir_preference");
+        this.dir_preference = select.options[select.selectedIndex].value;
+
+        select = $("start_direction");
+        this.start_direction = select.options[select.selectedIndex].value;
+
+        this.prefer_direction = $("prefer_direction").checked;
+        this.prefer_direction = $("prefer_direction").checked;
+        this.do_every_other = $("do_every_other").checked;
+
         var controller = new KnotCanvasController(canvas, grid);
         this.controller = controller;
         this.controller.do_letter_pins = true;
 
-        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(this.start_corner,this.start_direction), this.controller.colors, true, false, false);
+        this.controller.instructions = new KnotInstructions(grid, grid.getDefaultStartLocations(), this.controller.colors, true, false, false);
         this.controller.setHalfCycle(this.controller.instructions.getNumHalfCycles()-1);
-        this.do_every_other = false;
         this.do_half_way = false;
         this.do_short_hand = false;
         this.do_letter_pins = true;
@@ -156,6 +168,17 @@ KnotApp.prototype = {
 
         connect($("do_half_way"), "onclick", bind(function() {
             this.do_half_way = $("do_half_way").checked;
+            knot_app.update();
+        }, this));
+        connect($("prefer_direction"), "onclick", bind(function() {
+            this.prefer_direction = $("prefer_direction").checked;
+            var select = $("dir_preference");
+            this.dir_preference = select.options[select.selectedIndex].value;
+            knot_app.update();
+        }, this));
+        connect($("dir_preference"), "onchange", bind(function() {
+            var select = $("dir_preference");
+            this.dir_preference = select.options[select.selectedIndex].value;
             knot_app.update();
         }, this));
         connect($("do_short_hand"), "onclick", bind(function() {
@@ -307,6 +330,10 @@ KnotApp.prototype = {
             var dpi = parseFloat($("dpi").value);
             controller.setDPI(dpi);
         });
+        connect($("display_scale"), "onchange", function() {
+            var scale = parseFloat($("display_scale").value);
+            controller.canvas.setDisplayScale(scale);
+        });
         connect($("strand_width_inches"), "onchange", function() {
             strand_width = parseFloat($("strand_width_inches").value)*controller.DPI;
             controller.setStrandWidth(strand_width);
@@ -425,7 +452,7 @@ KnotApp.prototype = {
         connect($("colors"), "onchange", function(e) {
             var colors = $("colors").value.split(/\s+/);
             controller.colors = colors;
-            controller.canvas.render();
+            knot_app.update();
         });
         connect($("shadow_colors"), "onchange", function(e) {
             var colors = $("shadow_colors").value.split(/\s+/);
@@ -627,25 +654,34 @@ KnotApp.prototype = {
     },
 
     update: function() {
-        var default_start_locs = this.controller.grid.getDefaultStartLocations(this.start_corner,this.start_direction);
-        var every_other = [];
-        for(var i = 0; i < default_start_locs.length; i += 2) {
-            every_other.push(default_start_locs[i]);
-        }
-        for(var i = 1; i < default_start_locs.length; i += 2) {
-            every_other.push(default_start_locs[i]);
-        }
-        //log("default: " + default_start_locs);
-        //log("every_other: " + every_other);
-        var instructions;
-        var strand_lengths;
+        this.controller.grid.options.corner = this.start_corner;
+        this.controller.grid.options.prefer_dir = this.start_direction;
+        this.controller.grid.options.always_prefer_dir = this.prefer_direction;
+        this.controller.grid.options.dir_preference = this.dir_preference;
+        this.controller.grid.options.every_other = this.do_every_other;
+
+        var default_start_locs = this.controller.grid.getDefaultStartLocations();
+
+        var colors = this.controller.colors;
+        
         if(this.do_every_other) {
-            instructions = new KnotInstructions(this.controller.grid, every_other, this.controller.colors, this.do_letter_pins, this.do_half_way, this.do_short_hand);
-            strand_lengths = this.controller.strandLengths(every_other);
-        } else {
-            instructions = new KnotInstructions(this.controller.grid, default_start_locs, this.controller.colors, this.do_letter_pins, this.do_half_way, this.do_short_hand);
-            strand_lengths = this.controller.strandLengths(default_start_locs);
+            var all_colors = [];
+            for(var i = 0; i < default_start_locs.length; i++) {
+                all_colors[i] = this.controller.colors[i%this.controller.colors.length];
+            }
+
+            colors = [];
+            for(var i = 0; i < all_colors.length; i+=2) {
+                colors.push(all_colors[i]);
+            }
+            for(var i = 1; i < all_colors.length; i+=2) {
+                colors.push(all_colors[i]);
+            }
         }
+
+        var instructions = new KnotInstructions(this.controller.grid, default_start_locs, colors, this.do_letter_pins, this.do_half_way, this.do_short_hand);
+        var strand_lengths = this.controller.strandLengths(default_start_locs);
+
         this.controller.instructions = instructions;
         var numHalfCycles = instructions.getNumHalfCycles();
         if(numHalfCycles > 0) {
@@ -671,7 +707,8 @@ KnotApp.prototype = {
             len_inches = (strand_lengths[i]/this.controller.DPI);
             var feet = Math.floor(len_inches/12);
             var inches = len_inches-feet*12;
-            length_str += "Strand " + (i+1) + " (" + this.controller.colors[i%this.controller.colors.length] + "): " + feet + " feet " + inches.toFixed(4) + " inches (" + (len_inches*2.54).toFixed(4) + " cm)\n";
+            var col = colors[i%colors.length];
+            length_str += "Strand " + (i+1) + " (" + col + "): " + feet + " feet " + inches.toFixed(4) + " inches (" + (len_inches*2.54).toFixed(4) + " cm)\n";
         }
         $("colors_printout").innerHTML = $("colors").value;
         $("shadow_colors_printout").innerHTML = $("shadow_colors").value;
@@ -702,6 +739,7 @@ KnotApp.prototype = {
         $("strand_gap_size_print").innerHTML = strand_gap_in + " inches (" + strand_gap_cm + " cm)";
 
         $("dpi").value = this.controller.DPI;
+        $("display_scale").value = this.controller.canvas.display_scale;
         $("rows").innerHTML = this.controller.grid.rows;
         $("cols").innerHTML = this.controller.grid.cols;
         $("grid_options").innerHTML = this.controller.gridString || "Standard Grid";
